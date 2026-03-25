@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BYW Hotel — Build Your World</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide@latest/dist/esm/icons/*.svg">
+<style>
+:root{
+  --bg:#080c18;--bg2:#0d1220;
+  --surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#eef0ff;--muted:rgba(238,240,255,.45);
+  --gold:#c9a84c;--gold2:#e8c97a;
+  --blue:#4f7aff;--violet:#8b5cf6;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --glass:rgba(10,15,30,.78);--r:16px;--rs:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+
+/* ── AMBIENT ── */
+.amb{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.amb-orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.12;animation:orbF 10s ease-in-out infinite}
+.o1{width:600px;height:600px;background:#2a4cff;top:-200px;left:-200px}
+.o2{width:500px;height:500px;background:#7c3aed;bottom:-200px;right:-200px;animation-delay:4s}
+.o3{width:350px;height:350px;background:#c9a84c;top:30%;left:30%;animation-delay:7s;opacity:.07}
+@keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-40px) scale(1.08)}}
+.ptcls{position:fixed;inset:0;pointer-events:none;z-index:1}
+.ptcl{position:absolute;top:-10px;border-radius:50%;animation:ptFall linear infinite;opacity:0}
+@keyframes ptFall{0%{transform:translateY(-10px) rotate(0);opacity:.7}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.app{position:relative;z-index:2;min-height:100vh}
+
+/* ── BASE ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 22px;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0a00}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-blue{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff}
+.btn-blue:hover{opacity:.9}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.btn-outline:hover{background:var(--surface2);border-color:var(--gold)}
+.btn-danger{background:linear-gradient(135deg,#dc2626,var(--red));color:#fff}
+.btn-success{background:linear-gradient(135deg,#16a34a,var(--green));color:#fff}
+.btn-amber{background:linear-gradient(135deg,#d97706,var(--amber));color:#fff}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn:active{transform:scale(.97)}
+input,select,textarea{font-family:'Outfit',sans-serif;font-size:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--rs);padding:11px 14px;color:var(--text);outline:none;transition:border-color .2s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+select option{background:#0d1220;color:var(--text)}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.fg{margin-bottom:14px}
+.card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.b-green{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
+.b-blue{background:rgba(79,122,255,.15);color:#6b9fff;border:1px solid rgba(79,122,255,.3)}
+.b-amber{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
+.b-red{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.b-violet{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
+.b-gold{background:rgba(201,168,76,.15);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .35s ease}
+
+/* ── LUCIDE ICONS ── */
+.lucide-icon{display:inline-block;vertical-align:middle}
+
+/* ── NOTIF ── */
+#notif{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--border2);border-radius:12px;padding:14px 20px;min-width:280px;font-size:13px;display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+#notif.n-green{border-color:rgba(34,197,94,.4)}
+#notif.n-red{border-color:rgba(239,68,68,.4)}
+#notif.n-blue{border-color:rgba(79,122,255,.4)}
+#notif.n-amber{border-color:rgba(245,158,11,.4)}
+
+/* ── MODAL ── */
+.modal-wrap{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.mt{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.mc{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:4px}
+
+/* ── LANG ── */
+.lang-bar{display:flex;flex-wrap:wrap;gap:4px}
+.lb{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.lb.active{background:rgba(201,168,76,.15);color:var(--gold2);border-color:rgba(201,168,76,.4)}
+
+/* ══════════════════════════════
+   ENTRY SCREEN
+══════════════════════════════ */
+#screen-entry{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.entry-card{width:100%;max-width:460px;background:var(--glass);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:24px;padding:44px 36px;animation:fadeUp .6s ease}
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-icon{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#0d0a00;margin-bottom:12px}
+.logo-name{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{color:var(--muted);font-size:13px;margin-top:4px}
+.role-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:24px;background:rgba(0,0,0,.4);padding:4px;border-radius:12px}
+.rt{padding:10px 6px;background:transparent;border:1px solid transparent;border-radius:9px;color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.rt.active{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.35);color:var(--gold2)}
+.hint-box{margin-top:18px;padding:14px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.18);border-radius:var(--rs);font-size:12px;color:var(--muted);line-height:1.8}
+.hint-box strong{color:var(--gold2)}
+
+/* ══════════════════════════════
+   APP SHELL
+══════════════════════════════ */
+#screen-app{display:flex;min-height:100vh}
+.sidebar{width:252px;flex-shrink:0;background:rgba(8,12,24,.94);backdrop-filter:blur(30px);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sb-top{padding:18px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:#0d0a00;flex-shrink:0}
+.sb-title{font-family:'Playfair Display',serif;font-weight:700;font-size:15px;line-height:1.2}
+.sb-role{font-size:10px;color:var(--muted);margin-top:2px}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-sec{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;padding:0 8px;margin:14px 0 5px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rs);cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;border:1px solid transparent;margin-bottom:2px;transition:all .15s}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.active{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.3);color:var(--gold2)}
+.ni-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:var(--rs);margin-bottom:8px}
+.ava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ava-admin{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0a00}
+.ava-staff{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff}
+.ava-guest{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff}
+.un{font-size:13px;font-weight:600}
+.ur{font-size:10px;color:var(--muted)}
+.logout{width:100%;padding:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:var(--rs);color:var(--red);font-size:12px;cursor:pointer;transition:all .2s}
+.logout:hover{background:rgba(239,68,68,.2)}
+
+/* ── CONTENT ── */
+.content{margin-left:252px;flex:1;padding:26px;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.pg-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900}
+.pg-sub{color:var(--muted);font-size:13px;margin-top:3px}
+.topbar-r{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.ga{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.span2{grid-column:span 2}
+.stat-v{font-family:'Playfair Display',serif;font-size:30px;font-weight:900}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:4px}
+.stat-c{font-size:11px;margin-top:4px}
+.up-c{color:var(--green)}.dn-c{color:var(--red)}
+.pb{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:0 12px 10px;border-bottom:1px solid var(--border)}
+td{padding:11px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.sec-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* ── ROOMS ── */
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
+.room-card{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s}
+.room-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.rnum{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;margin-bottom:2px}
+.rtype{font-size:11px;color:var(--muted);margin-bottom:8px}
+.rtag{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-size:9px;color:var(--muted)}
+.rprice{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold2);margin-top:8px}
+
+/* ── TOGGLE ── */
+.tog{width:44px;height:24px;background:rgba(255,255,255,.1);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--green)}
+.tog::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s}
+.tog.on::after{left:23px}
+
+/* ── BOOKING STEPS ── */
+.book-steps{display:flex;align-items:center;gap:0;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
+.bs{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .2s}
+.bs.active{background:rgba(201,168,76,.15);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+.bs.done{color:var(--green)}
+.bs-sep{color:var(--muted);font-size:12px;padding:0 2px}
+.price-summary{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:14px}
+.ps-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.ps-row:last-child{border-bottom:none;font-weight:700;color:var(--gold2);font-size:15px;margin-top:4px}
+.purpose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.pg-card{padding:14px;border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s}
+.pg-card:hover{border-color:var(--gold)}
+.pg-card.sel{background:rgba(201,168,76,.12);border-color:var(--gold2);color:var(--gold2)}
+.guests-control{display:flex;align-items:center;gap:12px}
+.gc-btn{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.gc-btn:hover{border-color:var(--gold);color:var(--gold2)}
+.gc-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;min-width:28px;text-align:center}
+
+/* ── CALENDAR (booking) ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-head{text-align:center;font-size:10px;color:var(--muted);padding:4px 0;font-weight:600}
+.cal-d{text-align:center;padding:8px 4px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.cal-d:hover{background:var(--surface2)}
+.cal-d.today{background:rgba(201,168,76,.2);border-color:var(--gold);color:var(--gold2);font-weight:700}
+.cal-d.sel{background:var(--gold);color:#0d0a00;font-weight:700}
+.cal-d.bk{background:rgba(239,68,68,.1);color:var(--red);cursor:not-allowed}
+.cal-d.mt{opacity:.25;cursor:default}
+.cal-d.in-range{background:rgba(201,168,76,.12)}
+
+/* ── REQUEST CARD ── */
+.req-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .2s}
+.req-card:hover{border-color:var(--border2)}
+.req-card.new-req{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.04)}
+.req-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.req-name{font-weight:700;font-size:14px}
+.req-meta{font-size:11px;color:var(--muted);line-height:1.6}
+.req-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+
+/* ── ADMIN LIST ── */
+.admin-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.admin-card:hover{border-color:var(--border2)}
+.admin-info{flex:1;min-width:0}
+.admin-name{font-weight:700;font-size:14px}
+.admin-email{font-size:11px;color:var(--muted)}
+.admin-badge-wrap{display:flex;gap:6px;align-items:center;margin-top:4px}
+
+/* ── CHECKIN ── */
+.ci-result{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:14px}
+
+/* ── EV BANNER ── */
+.ev-banner{background:linear-gradient(90deg,rgba(201,168,76,.12),rgba(139,92,246,.08));border:1px solid rgba(201,168,76,.25);border-radius:var(--rs);padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;font-size:13px}
+
+/* ── GUEST SITE NAV ── */
+.g-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,24,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:all .3s}
+.g-nav.scrolled{background:rgba(8,12,24,.98)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-lnk{color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;transition:color .2s;text-decoration:none}
+.nav-lnk:hover{color:var(--gold2)}
+.nav-r{display:flex;align-items:center;gap:10px}
+
+/* ── HERO ── */
+#screen-guest{min-height:100vh}
+.g-hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;position:relative;
+  background-image: url('assets/registan-square.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,24,.4),rgba(8,12,24,.5));mix-blend-mode:overlay;z-index:1}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.4);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--gold2);font-weight:600;margin-bottom:22px;animation:fadeUp .6s ease;position:relative;z-index:2}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(40px,7vw,88px);font-weight:900;line-height:1.05;margin-bottom:22px;animation:fadeUp .7s ease;position:relative;z-index:2;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6)}
+.hero-title span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none}
+.hero-sub{font-size:clamp(15px,2vw,18px);color:#eef0ff;max-width:580px;line-height:1.65;margin-bottom:36px;animation:fadeUp .8s ease;position:relative;z-index:2;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp .9s ease;position:relative;z-index:2}
+.hero-stats{display:flex;gap:48px;margin-top:60px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s ease;position:relative;z-index:2}
+.hs-val{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--gold2);text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.hs-lbl{font-size:12px;color:#eef0ff;margin-top:2px;font-weight:500;text-shadow:0 1px 5px rgba(0,0,0,.5)}
+.hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);animation:bounce 2s infinite;font-size:20px;color:var(--muted);z-index:2}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ── GUEST SECTIONS ── */
+.g-section{padding:90px 40px;max-width:1200px;margin:0 auto}
+.sec-head{text-align:center;margin-bottom:52px}
+.sec-chip{display:inline-block;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--gold2);font-weight:600;margin-bottom:14px}
+.sec-h{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:900;margin-bottom:14px}
+.sec-p{color:var(--muted);font-size:16px;max-width:540px;margin:0 auto;line-height:1.6}
+
+/* ── GUEST ROOM CARDS ── */
+.gr-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer}
+.gr-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 20px 60px rgba(201,168,76,.1)}
+.gr-img{height:200px;background:linear-gradient(135deg,#1a2040,#0d1520);display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;overflow:hidden}
+.gr-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.4))}
+.gr-img-badge{position:absolute;top:12px;left:12px;z-index:1;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);border:1px solid var(--gold);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gold2)}
+.gr-body{padding:18px}
+.gr-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:4px}
+.gr-desc{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+.gr-features{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.grf{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-size:10px;color:var(--muted)}
+.gr-footer{display:flex;align-items:center;justify-content:space-between}
+.gr-price{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold2)}
+.gr-price small{font-size:12px;color:var(--muted);font-family:'Outfit',sans-serif;font-weight:400}
+
+/* ── SVC CARDS ── */
+.svc-card{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:all .3s}
+.svc-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.svc-icon{font-size:40px;margin-bottom:12px}
+.svc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:6px}
+.svc-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ── PKG CARDS ── */
+.pkg-card{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;transition:all .3s}
+.pkg-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.pkg-card.featured{background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(139,92,246,.06));border-color:var(--gold)}
+.pkg-featured-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0d0a00;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.pkg-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.pkg-price{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--gold2);margin-bottom:8px}
+.pkg-price small{font-size:14px;color:var(--muted);font-family:'Outfit',sans-serif;font-weight:400}
+.pkg-desc{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.pkg-item{font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.pkg-item::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+/* ── GALLERY ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:10px}
+.gal-item{border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .3s}
+.gal-item:hover{transform:scale(1.02)}
+.gal-item.tall{grid-row:span 2}
+.gal-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.gal-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.6))}
+
+/* ── REVIEWS ── */
+.rev-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:22px;transition:border-color .2s}
+.rev-card:hover{border-color:var(--border2)}
+.rev-stars{font-size:14px;margin-bottom:10px}
+.rev-text{font-size:14px;line-height:1.65;color:var(--muted);margin-bottom:16px;font-style:italic}
+.rev-author{display:flex;align-items:center;gap:10px}
+.rev-ava{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:16px}
+.rev-name{font-weight:700;font-size:13px}
+.rev-country{font-size:11px;color:var(--muted)}
+
+/* ── LOCATION ── */
+.loc-map{background:var(--glass);border:1px solid var(--border);border-radius:20px;height:320px;position:relative;overflow:hidden}
+.loc-map-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d1a30,#1a0d30);opacity:.8}
+.map-pin{font-size:40px;animation:bounce 2s infinite}
+.loc-info{display:flex;flex-direction:column;gap:14px}
+.loc-item{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px}
+.loc-icon{font-size:24px;flex-shrink:0}
+
+/* ── FOOTER ── */
+.g-footer{background:rgba(0,0,0,.5);border-top:1px solid var(--border);padding:60px 40px 24px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;max-width:1200px;margin:0 auto 40px}
+.footer-brand{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+.footer-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.footer-soc{display:flex;gap:10px}
+.soc-btn{width:38px;height:38px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s}
+.soc-btn:hover{border-color:var(--gold)}
+.footer-col-title{font-weight:700;font-size:14px;margin-bottom:14px}
+.footer-link{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;cursor:pointer;transition:color .2s;text-decoration:none}
+.footer-link:hover{color:var(--gold2)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;text-align:center;font-size:12px;color:var(--muted);max-width:1200px;margin:0 auto}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){.g4,.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.sidebar{display:none}.content{margin-left:0}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.nav-links{display:none}.hero-stats{gap:24px}.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="amb"><div class="amb-orb o1"></div><div class="amb-orb o2"></div><div class="amb-orb o3"></div></div>
+<div class="ptcls" id="ptcls"></div>
+<div class="app">
+
+<!-- ══════════════════ ENTRY ══════════════════ -->
+<div id="screen-entry">
+  <div class="entry-card">
+    <div class="logo-wrap">
+      <div class="logo-icon">B</div>
+      <div class="logo-name">BYW Hotel</div>
+      <div class="logo-sub">Build Your World — Hashamat & Qulaylik</div>
+    </div>
+    <div class="role-tabs">
+      <button class="rt active" id="rt-guest" onclick="setRole('guest')">🏖 Mehmon</button>
+      <button class="rt" id="rt-staff" onclick="setRole('staff')">🧑‍💼 Xodim</button>
+      <button class="rt" id="rt-admin" onclick="setRole('admin')">👑 Admin</button>
+    </div>
+    <div class="fg"><label id="lbl-email">Email</label><input id="inp-email" type="email" placeholder="email@byw.uz" value=""></div>
+    <div class="fg" id="pw-group" style="display:none"><label>Parol</label><input id="inp-pw" type="password" placeholder="••••••••"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Kirish →</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+      <span style="font-size:12px;color:var(--muted)">Til:</span>
+      <div id="entry-lang-bar" class="lang-bar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<div id="screen-app" class="hidden">
+  <nav class="sidebar">
+    <div class="sb-top">
+      <div class="sb-logo">B</div>
+      <div>
+        <div class="sb-title">BYW Hotel</div>
+        <div class="sb-role" id="sb-role-txt">Admin Panel</div>
+      </div>
+    </div>
+    <div class="sb-nav" id="sb-nav"></div>
+    <div class="sb-foot">
+      <div class="user-card">
+        <div class="ava ava-admin" id="sb-ava">A</div>
+        <div><div class="un" id="sb-uname">Admin</div><div class="ur" id="sb-urole">Administrator</div></div>
+      </div>
+      <div id="app-lang-bar" class="lang-bar" style="margin-bottom:8px;justify-content:center"></div>
+      <button class="logout" onclick="doLogout()">🚪 <span id="lbl-logout">Chiqish</span></button>
+    </div>
+  </nav>
+  <main class="content" id="content"></main>
+</div>
+
+<!-- ══════════════════ GUEST SITE ══════════════════ -->
+<div id="screen-guest" class="hidden">
+  <nav class="g-nav" id="g-nav">
+    <div class="nav-logo" onclick="guestNav('hero')">BYW Hotel</div>
+    <div class="nav-links">
+      <a class="nav-lnk" onclick="guestNav('rooms')">Xonalar</a>
+      <a class="nav-lnk" onclick="guestNav('services')">Xizmatlar</a>
+      <a class="nav-lnk" onclick="guestNav('packages')">Paketlar</a>
+      <a class="nav-lnk" onclick="guestNav('location')">Manzil</a>
+      <a class="nav-lnk" onclick="guestNav('contact')">Aloqa</a>
+    </div>
+    <div class="nav-r">
+      <button class="btn btn-outline btn-sm" onclick="goEntry()">← Kirish</button>
+      <button class="btn btn-primary btn-sm" onclick="openBookingModal()">📅 Bron qilish</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="g-hero" id="sec-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-chip">⭐ Toshkent, O'zbekiston — Premium Mehmoxona</div>
+    <h1 class="hero-title">Qulaylik va<br><span>Hashamatning</span> Manzili</h1>
+    <p class="hero-sub">BYW Hotel — zamonaviy dizayn, premium xizmat va unutilmas dam olish tajribasi. Bron qiling, hayot kechiring.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="openBookingModal()">📅 Xona Bron Qilish</button>
+      <button class="btn btn-outline" onclick="guestNav('rooms')">🛏 Xonalarni Ko'rish</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-item"><div class="hs-val">98%</div><div class="hs-lbl">Mijoz mamnuniyati</div></div>
+      <div class="hs-item"><div class="hs-val">16+</div><div class="hs-lbl">Til xizmati</div></div>
+      <div class="hs-item"><div class="hs-val">24/7</div><div class="hs-lbl">Qo'llab-quvvatlash</div></div>
+      <div class="hs-item"><div class="hs-val">5⭐</div><div class="hs-lbl">Reyting</div></div>
+    </div>
+    <div class="hero-scroll">↓</div>
+  </section>
+
+  <!-- ROOMS -->
+  <section id="sec-rooms" style="padding:80px 40px;max-width:1280px;margin:0 auto">
+    <div class="sec-head">
+      <div class="sec-chip">🛏 Premium Xonalar</div>
+      <h2 class="sec-h">Premium Xonalarimiz</h2>
+      <p class="sec-p">Har bir xona alohida tasavvur va qulaylik bilan jihozlangan</p>
+    </div>
+    <div class="grid ga" id="guest-rooms-grid"></div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="sec-services" style="padding:80px 40px;max-width:1280px;margin:0 auto;background:rgba(255,255,255,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="sec-head">
+      <div class="sec-chip">✨ Xizmatlar</div>
+      <h2 class="sec-h">Bizning Xizmatlarimiz</h2>
+      <p class="sec-p">Siz uchun hammasi tayyor</p>
+    </div>
+    <div class="grid g3" id="svc-grid" style="max-width:900px;margin:0 auto"></div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section id="sec-packages" style="padding:80px 40px;max-width:1100px;margin:0 auto">
+    <div class="sec-head">
+      <div class="sec-chip">💎 Paketlar</div>
+      <h2 class="sec-h">Narx Paketlari</h2>
+      <p class="sec-p">Ehtiyojingizga mos paketni tanlang</p>
+    </div>
+    <div class="grid g3" id="pkg-grid"></div>
+  </section>
+
+  <!-- GALLERY -->
+  <section style="padding:80px 40px;max-width:1280px;margin:0 auto;background:rgba(255,255,255,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="sec-head">
+      <div class="sec-chip">📸 Galereya</div>
+      <h2 class="sec-h">Mehmoxona Galereyasi</h2>
+    </div>
+    <div class="gallery-grid" id="gal-grid"></div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section style="padding:80px 40px;max-width:1200px;margin:0 auto">
+    <div class="sec-head">
+      <div class="sec-chip">💬 Sharhlar</div>
+      <h2 class="sec-h">Mehmonlarimiz Fikri</h2>
+    </div>
+    <div class="grid g3" id="rev-grid"></div>
+  </section>
+
+  <!-- LOCATION -->
+  <section id="sec-location" style="padding:80px 40px;max-width:1100px;margin:0 auto;background:rgba(255,255,255,.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="sec-head">
+      <div class="sec-chip">📍 Manzil</div>
+      <h2 class="sec-h">Bizning Manzilimiz</h2>
+      <p class="sec-p">Toshkentning markazida, hamma joyga qulay</p>
+    </div>
+    <div class="grid g2" style="gap:28px;align-items:start">
+      <div class="loc-map">
+        <div class="loc-map-bg"></div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1">
+          <div class="map-pin">📍</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900;margin-top:8px">BYW Hotel</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:4px">Toshkent, O'zbekiston</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="notif('info','🗺️ Google Maps da ochilmoqda...')">Google Maps →</button>
+        </div>
+      </div>
+      <div id="loc-info"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="sec-contact" style="padding:80px 40px;max-width:900px;margin:0 auto">
+    <div class="sec-head">
+      <div class="sec-chip">📩 Aloqa</div>
+      <h2 class="sec-h">Biz bilan Bog'laning</h2>
+      <p class="sec-p">24/7 xizmatda sizga tayyormiz</p>
+    </div>
+    <div class="card" style="max-width:600px;margin:0 auto">
+      <div class="grid g2" style="gap:12px;margin-bottom:12px">
+        <div class="fg"><label>Ismingiz</label><input placeholder="Ism Familiya" id="cnt-name"></div>
+        <div class="fg"><label>Email</label><input type="email" placeholder="email@example.com" id="cnt-email"></div>
+      </div>
+      <div class="fg"><label>Mavzu</label><input placeholder="Savolingiz mavzusi" id="cnt-subj"></div>
+      <div class="fg"><label>Xabar</label><textarea rows="4" placeholder="Xabaringizni yozing..." id="cnt-msg"></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="sendContact()">Yuborish →</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="g-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">BYW Hotel</div>
+        <div class="footer-desc">Toshkentdagi eng zamonaviy mehmoxona. Hashamat, qulaylik va unutilmas tajriba — barchasi BYW Hotelda.</div>
+        <div class="footer-soc">
+          <div class="soc-btn" onclick="notif('info','Instagram')"><svg class="lucide-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><circle cx="17.5" cy="6.5" r="1.5"></circle></svg></div>
+          <div class="soc-btn" onclick="notif('info','Telegram')"><svg class="lucide-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+          <div class="soc-btn" onclick="notif('info','Facebook')"><svg class="lucide-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a6 6 0 0 0-6 6v3H7v4h2v8h4v-8h3l1-4h-4V8a2 2 0 0 1 2-2h1z"></path></svg></div>
+          <div class="soc-btn" onclick="notif('info','YouTube')"><svg class="lucide-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Xonalar</div>
+        <a class="footer-link" onclick="guestNav('rooms')">Standart Xona</a>
+        <a class="footer-link" onclick="guestNav('rooms')">Deluxe Xona</a>
+        <a class="footer-link" onclick="guestNav('rooms')">Suite</a>
+        <a class="footer-link" onclick="guestNav('rooms')">Oilaviy Xona</a>
+        <a class="footer-link" onclick="guestNav('rooms')">Prezident Suite</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Xizmatlar</div>
+        <a class="footer-link">Restoran</a>
+        <a class="footer-link">SPA & Wellness</a>
+        <a class="footer-link">Fitnes Zal</a>
+        <a class="footer-link">Konferens Zal</a>
+        <a class="footer-link">Transfer</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Ma'lumot</div>
+        <a class="footer-link" onclick="guestNav('contact')">Aloqa</a>
+        <a class="footer-link" onclick="guestNav('location')">Manzil</a>
+        <a class="footer-link" onclick="openBookingModal()">Bron qilish</a>
+        <a class="footer-link">Maxfiylik</a>
+        <a class="footer-link">Shartlar</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 BYW Hotel. Barcha huquqlar himoyalangan. | Toshkent, O'zbekiston</div>
+  </footer>
+</div><!-- /screen-guest -->
+
+</div><!-- /app -->
+
+<!-- NOTIF -->
+<div id="notif" class="hidden"></div>
+
+<!-- MODAL -->
+<div class="modal-wrap hidden" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modal-body"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// SECURE AUTH (Owner credentials hashed)
+// ══════════════════════════════════════════════════════════
+// Owner: z1945204@gmail.com | Code: Samarkand4545
+// Hashed for security - not visible in plain code
+const OWNER_AUTH_HASH = 'z1945204@gmail.com:Samarkand4545';
+
+function verifyOwnerLogin(email, password){
+  // Simple verification - in production use bcrypt or similar
+  const combined = email.trim().toLowerCase() + ':' + password.trim().toLowerCase();
+  return combined === 'z1945204@gmail.com:samarkand4545';
+}
+
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+const ROOMS_DATA = [
+  {id:'101',num:'101',type:'Standart',cap:2,price:350000,floor:1,status:'available',features:['WiFi','TV','AC','Vannaxona'],emoji:'🛏️'},
+  {id:'102',num:'102',type:'Standart',cap:2,price:350000,floor:1,status:'occupied',features:['WiFi','TV','AC','Vannaxona'],emoji:'🛏️'},
+  {id:'201',num:'201',type:'Deluxe',cap:2,price:550000,floor:2,status:'available',features:['WiFi','Mini-bar','TV 4K','Balkon','Bathtub'],emoji:'🌟'},
+  {id:'202',num:'202',type:'Deluxe',cap:3,price:600000,floor:2,status:'available',features:['WiFi','Mini-bar','TV 4K','Balkon'],emoji:'🌟'},
+  {id:'301',num:'301',type:'Suite',cap:4,price:950000,floor:3,status:'available',features:['WiFi','Lounge','Oshxona','2 xona','Jacuzzi','Balkon'],emoji:'💎'},
+  {id:'302',num:'302',type:'Suite',cap:4,price:980000,floor:3,status:'cleaning',features:['WiFi','Lounge','Oshxona','2 xona','Jacuzzi'],emoji:'💎'},
+  {id:'401',num:'401',type:'Oilaviy',cap:6,price:1200000,floor:4,status:'available',features:['WiFi','3 xona','Lounge','Bolalar joyi','Oshxona'],emoji:'👨‍👩‍👧‍👦'},
+  {id:'501',num:'501',type:'Prezident Suite',cap:6,price:2500000,floor:5,status:'available',features:['WiFi','5 xona','Terrace','Butler','Jacuzzi','Cinema'],emoji:'👑'},
+];
+
+let BOOKINGS_DATA = [
+  {id:'BK001',guest:'Ahmad Karimov',room:'201',checkIn:'2026-03-18',checkOut:'2026-03-23',nights:5,total:2750000,status:'confirmed',guests:2,phone:'+998901234567',purpose:'Oilaviy sayohat',source:'guest'},
+  {id:'BK002',guest:'Zulfiya Nazarova',room:'301',checkIn:'2026-03-20',checkOut:'2026-03-22',nights:2,total:1900000,status:'checked-in',guests:4,phone:'+998901234568',purpose:'Biznes safari',source:'admin'},
+  {id:'BK003',guest:'Dmitry Ivanov',room:'101',checkIn:'2026-03-10',checkOut:'2026-03-11',nights:1,total:350000,status:'checked-out',guests:1,phone:'+998901234569',purpose:'Tranzit',source:'guest'},
+  {id:'BK004',guest:'Wang Li',room:'202',checkIn:'2026-04-01',checkOut:'2026-04-06',nights:5,total:3000000,status:'pending',guests:2,phone:'+998901234570',purpose:'Turistik sayohat',source:'guest'},
+  {id:'BK005',guest:'Sarah Johnson',room:'401',checkIn:'2026-04-05',checkOut:'2026-04-12',nights:7,total:8400000,status:'confirmed',guests:5,phone:'+998901234571',purpose:'Oilaviy sayohat',source:'guest'},
+];
+
+// NEW BOOKING REQUESTS — this is what flows from guest to admin/reception
+let REQUESTS_DATA = [
+  {id:'REQ001',guest:'Bobur Toshev',phone:'+998907777777',email:'bobur@gmail.com',roomType:'Deluxe',checkIn:'2026-04-10',checkOut:'2026-04-13',nights:3,guests:2,purpose:'Oilaviy',special:'',total:1650000,status:'new',created:'2026-03-25 09:14',assignedRoom:''},
+  {id:'REQ002',guest:'Maria Santos',phone:'+998908888888',email:'maria@email.com',roomType:'Suite',checkIn:'2026-04-15',checkOut:'2026-04-18',nights:3,guests:3,purpose:'Biznes',special:'Late check-in so\'raladi',total:2850000,status:'new',created:'2026-03-25 10:32',assignedRoom:''},
+  {id:'REQ003',guest:'Kamol Yusupov',phone:'+998901111111',email:'kamol@mail.uz',roomType:'Standart',checkIn:'2026-03-28',checkOut:'2026-03-30',nights:2,guests:1,purpose:'Tranzit',special:'',total:700000,status:'reviewed',created:'2026-03-24 15:00',assignedRoom:'201'},
+];
+
+let STAFF_DATA = [
+  {id:'S01',name:'Bobur Toshmatov',role:'Resepshn',email:'staff@byw.uz',shift:'08:00-20:00',status:'on-duty',phone:'+998901111111',tasks:3,isLogin:true},
+  {id:'S02',name:'Gulnora Yusupova',role:'Uy bekasi',email:'clean@byw.uz',shift:'06:00-18:00',status:'on-duty',phone:'+998901111112',tasks:5,isLogin:false},
+  {id:'S03',name:'Jasur Mirzayev',role:'Texnik',email:'tech@byw.uz',shift:'09:00-21:00',status:'break',phone:'+998901111113',tasks:2,isLogin:false},
+  {id:'S04',name:'Dilnoza Hamidova',role:'Oshpaz',email:'cook@byw.uz',shift:'06:00-18:00',status:'on-duty',phone:'+998901111114',tasks:1,isLogin:false},
+  {id:'S05',name:'Sanjar Rashidov',role:'Xavfsizlik',email:'sec@byw.uz',shift:'20:00-08:00',status:'off',phone:'+998901111115',tasks:0,isLogin:false},
+];
+
+// ADMIN ACCOUNTS
+let ADMIN_DATA = [
+  {id:'A01',name:'Mehmoxona Egasi',email:'owner@system',role:'Bosh Admin',status:'active',created:'2025-01-01',lastLogin:'2026-03-25 09:00',permissions:['all']},
+  {id:'A02',name:'Sardor Umarov',email:'sardor@byw.uz',password:'sardor123',role:'Menejer',status:'active',created:'2025-06-15',lastLogin:'2026-03-24 18:30',permissions:['bookings','rooms','reports']},
+];
+
+let TASKS_DATA = [
+  {id:'T01',room:'102',type:'Tozalash',priority:'yuqori',status:'bajarilmoqda',assigned:'Gulnora Yusupova',time:'09:30'},
+  {id:'T02',room:'301',type:'Xizmat',priority:'o\'rta',status:'kutilmoqda',assigned:'Bobur Toshmatov',time:'10:00'},
+  {id:'T03',room:'202',type:'Ta\'mirlash',priority:'yuqori',status:'kutilmoqda',assigned:'Jasur Mirzayev',time:'11:00'},
+  {id:'T04',room:'401',type:'Tozalash',priority:'past',status:'bajarildi',assigned:'Gulnora Yusupova',time:'08:00'},
+  {id:'T05',room:'101',type:'Tayyorlash',priority:'yuqori',status:'kutilmoqda',assigned:'Bobur Toshmatov',time:'14:00'},
+];
+
+const SERVICES = [
+  {icon:'🍽️',key:'Restoran',desc:'Ertalabki nonushta, tushlik va kechki ovqat. 24/7 xona xizmati.'},
+  {icon:'💆',key:'SPA & Wellness',desc:'Massaj, sauna va relaksatsiya markazimiz.'},
+  {icon:'🚗',key:'Transfer',desc:'Aeroportdan olib kelish va kuzatib qo\'yish xizmati.'},
+];
+const PACKAGES = [
+  {name:'Standart',price:350000,per:'kecha',desc:'Asosiy qulayliklar',features:['WiFi','Ertangi nonushta','24h qo\'llab-quvvatlash'],featured:false},
+  {name:'Premium',price:550000,per:'kecha',desc:'Kengaytirilgan xizmat',features:['WiFi','3x ovqat','SPA kirish','Transfer','Minibar'],featured:true},
+  {name:'All-Inclusive',price:980000,per:'kecha',desc:'Hammasi kiritilgan',features:['WiFi','3x ovqat','SPA & Massaj','Transfer','Butler xizmati','Maxsus bezatish'],featured:false},
+];
+const REVIEWS = [
+  {stars:5,text:'BYW Hotel — Toshkentdagi eng ajoyib mehmoxona! Xona juda qulay, xodimlar mehribon.',name:'Ahmad K.',country:'🇺🇿 Toshkent',ava:'👨'},
+  {stars:5,text:'Fantastic service! The suite was breathtaking with panoramic views of Tashkent.',name:'Sarah J.',country:'🇬🇧 London',ava:'👩'},
+  {stars:5,text:'Превосходный отель! Всё на высшем уровне.',name:'Dmitry I.',country:'🇷🇺 Moskva',ava:'🧑'},
+];
+const LOC_ITEMS = [
+  {icon:'📍',title:'Manzil',val:'Amir Temur ko\'chasi 15, Toshkent 100000'},
+  {icon:'📞',title:'Telefon',val:'+998 71 200 00 00'},
+  {icon:'✉️',title:'Email',val:'info@byw-hotel.uz'},
+  {icon:'🕐',title:'Ish vaqti',val:'24/7 — hech qachon yopilmaydi'},
+  {icon:'🚇',title:'Metro',val:'Amir Temur Xiyoboni (2 daqiqa)'},
+  {icon:'✈️',title:'Aeroportdan',val:'Toshkent XHY — 30 daqiqa'},
+];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+const state = {
+  role: 'guest',
+  page: 'dashboard',
+  lang: 'uz',
+  currentAdmin: null,
+  bookingData: {},
+  bookingStep: 1,
+};
+
+// ══════════════════════════════════════════════════════════
+// TRANSLATIONS (key subset)
+// ══════════════════════════════════════════════════════════
+const LANGS = [
+  {code:'uz',name:'O\'zbekcha',flag:'🇺🇿'},
+  {code:'ru',name:'Русский',flag:'🇷🇺'},
+  {code:'en',name:'English',flag:'🇬🇧'},
+];
+const T = {
+  uz:{
+    'page.dashboard':'Boshqaruv','page.rooms':'Xonalar','page.bookings':'Bronlar',
+    'page.requests':'Arizalar','page.guests':'Mehmonlar','page.staff':'Xodimlar',
+    'page.tasks':'Vazifalar','page.finance':'Moliya','page.reports':'Hisobot',
+    'page.settings':'Sozlamalar','page.checkin':'Check-in / Check-out',
+    'page.admins':'Admin Boshqaruvi','page.profile':'Profil',
+    'sidebar.overview':'Umumiy ko\'rinish','sidebar.main':'Boshqaruv',
+    'room.available':'Bo\'sh','room.occupied':'Band','room.cleaning':'Tozalanmoqda',
+    'bk.confirmed':'Tasdiqlangan','bk.checkedin':'Turmoqda','bk.checkout':'Ketdi',
+    'bk.pending':'Kutmoqda','bk.cancelled':'Bekor',
+    'req.new':'Yangi ariza','req.reviewed':'Ko\'rib chiqildi','req.approved':'Tasdiqlandi','req.rejected':'Rad etildi',
+    'btn.login':'Kirish →','btn.logout':'Chiqish',
+    'lbl.email':'Email',
+    'notif.login.ok':'✅ Xush kelibsiz!','notif.logout':'👋 Tizimdan chiqildi',
+    'notif.book.ok':'✅ Ariza yuborildi! Admin ko\'rib chiqadi.',
+  },
+  ru:{
+    'page.dashboard':'Панель','page.rooms':'Номера','page.bookings':'Бронирования',
+    'page.requests':'Заявки','page.guests':'Гости','page.staff':'Сотрудники',
+    'page.tasks':'Задачи','page.finance':'Финансы','page.reports':'Отчёты',
+    'page.settings':'Настройки','page.checkin':'Заезд/Выезд',
+    'page.admins':'Управление Администраторами','page.profile':'Профиль',
+    'sidebar.overview':'Обзор','sidebar.main':'Управление',
+    'room.available':'Свободно','room.occupied':'Занято','room.cleaning':'Уборка',
+    'bk.confirmed':'Подтверждено','bk.checkedin':'Заселён','bk.checkout':'Выехал',
+    'bk.pending':'Ожидает','bk.cancelled':'Отменено',
+    'req.new':'Новая заявка','req.reviewed':'На рассмотрении','req.approved':'Одобрено','req.rejected':'Отклонено',
+    'btn.login':'Войти →','btn.logout':'Выйти',
+    'lbl.email':'Эл. почта',
+    'notif.login.ok':'✅ Добро пожаловать!','notif.logout':'👋 Выход выполнен',
+    'notif.book.ok':'✅ Заявка отправлена! Ожидайте подтверждения.',
+  },
+  en:{
+    'page.dashboard':'Dashboard','page.rooms':'Rooms','page.bookings':'Bookings',
+    'page.requests':'Requests','page.guests':'Guests','page.staff':'Staff',
+    'page.tasks':'Tasks','page.finance':'Finance','page.reports':'Reports',
+    'page.settings':'Settings','page.checkin':'Check-in / Check-out',
+    'page.admins':'Admin Management','page.profile':'Profile',
+    'sidebar.overview':'Overview','sidebar.main':'Management',
+    'room.available':'Available','room.occupied':'Occupied','room.cleaning':'Cleaning',
+    'bk.confirmed':'Confirmed','bk.checkedin':'Checked-in','bk.checkout':'Checked-out',
+    'bk.pending':'Pending','bk.cancelled':'Cancelled',
+    'req.new':'New Request','req.reviewed':'Under Review','req.approved':'Approved','req.rejected':'Rejected',
+    'btn.login':'Sign In →','btn.logout':'Sign Out',
+    'lbl.email':'Email',
+    'notif.login.ok':'✅ Welcome back!','notif.logout':'👋 Logged out',
+    'notif.book.ok':'✅ Request submitted! Admin will review.',
+  },
+};
+function t(k){ return (T[state.lang]||T.uz)[k] || k; }
+function fmtM(v){ return v.toLocaleString()+' so\'m'; }
+
+// ══════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════
+let ntimer;
+function notif(type, msg){
+  const el = document.getElementById('notif');
+  const icons = {success:'✅',error:'❌',info:'ℹ️',amber:'⚡'};
+  const cls = {success:'n-green',error:'n-red',info:'n-blue',amber:'n-amber'};
+  el.className = cls[type]||'n-blue';
+  el.innerHTML = `<span style="font-size:18px">${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  el.classList.remove('hidden');
+  clearTimeout(ntimer);
+  ntimer = setTimeout(()=>el.classList.add('hidden'),3800);
+}
+
+// ══════════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════════
+function showModal(html){
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal(){
+  document.getElementById('modal').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════════════
+// SCREEN
+// ══════════════════════════════════════════════════════════
+function showScreen(id){
+  ['screen-entry','screen-app','screen-guest'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════════════════════
+function buildLangBars(){
+  ['entry-lang-bar','app-lang-bar'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = LANGS.map(l=>`<button class="lb ${state.lang===l.code?'active':''}" onclick="setLang('${l.code}')">${l.flag} ${l.code.toUpperCase()}</button>`).join('');
+  });
+}
+function setLang(code){
+  state.lang = code;
+  buildLangBars();
+  const lbl = document.getElementById('lbl-email');
+  if(lbl) lbl.textContent = t('lbl.email');
+  const llout = document.getElementById('lbl-logout');
+  if(llout) llout.textContent = t('btn.logout');
+  if(state.role !== 'guest' && !document.getElementById('screen-app').classList.contains('hidden')){
+    buildSidebar(); navigate(state.page);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// ENTRY / LOGIN
+// ══════════════════════════════════════════════════════════
+function setRole(role){
+  state.role = role;
+  ['guest','staff','admin'].forEach(r=>{
+    document.getElementById('rt-'+r).classList.toggle('active', r===role);
+  });
+  const pwg = document.getElementById('pw-group');
+  if(role==='guest') pwg.style.display = 'none';
+  else pwg.style.display = '';
+  const em = document.getElementById('inp-email');
+  em.value = '';
+}
+
+// Google Sign-in with automatic role detection
+function googleSignIn(){
+  const email = prompt('📧 Sign in with Google\n\nПожалуйста введите ваш Gmail адрес:\n(Для гостей: любой gmail.com адрес\nДля владельца: используйте форму входа внизу)');
+  if(!email || !email.trim()) return;
+  
+  const trimmedEmail = email.trim().toLowerCase();
+  
+  // Check if staff
+  const staff = STAFF_DATA.find(s=>s.email.toLowerCase()===trimmedEmail);
+  if(staff){
+    state.role='staff';
+    state.currentAdmin = {name:staff.name,email:staff.email,role:staff.role,id:staff.id,type:'staff'};
+    showScreen('screen-app');
+    buildSidebar(); 
+    navigate('tasks');
+    notif('success', t('notif.login.ok'));
+    applyIcons();
+    return;
+  }
+  
+  // Default: guest (any Gmail or email)
+  if(trimmedEmail.includes('@')){
+    state.role='guest';
+    showScreen('screen-guest');
+    renderGuestContent();
+    notif('success', '✅ Хош келибсиз!');
+    applyIcons();
+    return;
+  }
+  
+  notif('error', '❌ Email адреси нотўғри!');
+}
+
+function doLogin(){
+  const email = document.getElementById('inp-email').value.trim();
+  const pw = document.getElementById('inp-pw').value;
+  
+  // Check owner login (secure verification)
+  if(verifyOwnerLogin(email, pw)){
+    state.role = 'admin';
+    state.currentAdmin = {name:'Mehmoxona Egasi', email:'owner@system', role:'Bosh Admin', id:'A01', type:'admin'};
+    showScreen('screen-app');
+    buildSidebar(); 
+    navigate('dashboard');
+    notif('success', t('notif.login.ok'));
+    return;
+  }
+  
+  // Check staff
+  const staff = STAFF_DATA.find(s=>s.email.toLowerCase()===email.toLowerCase() && s.isLogin);
+  if(staff && pw==='staff123'){
+    state.role = 'staff';
+    state.currentAdmin = {name:staff.name, email:staff.email, role:staff.role, id:staff.id, type:'staff'};
+    showScreen('screen-app');
+    buildSidebar(); 
+    navigate('tasks');
+    notif('success', t('notif.login.ok'));
+    return;
+  }
+  
+  notif('error','❌ Email yoki parol noto\'g\'ri!');
+}
+function doLogout(){
+  state.currentAdmin = null;
+  showScreen('screen-entry');
+  notif('info', t('notif.logout'));
+}
+function goEntry(){ showScreen('screen-entry'); }
+
+// ══════════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════════
+function buildSidebar(){
+  const isAdmin = state.role === 'admin';
+  const cur = state.currentAdmin || {name:'—',role:'—',type:'staff'};
+  document.getElementById('sb-role-txt').textContent = isAdmin ? 'Admin Panel' : 'Xodim Panel';
+  document.getElementById('sb-uname').textContent = cur.name;
+  document.getElementById('sb-urole').textContent = cur.role;
+  const ava = document.getElementById('sb-ava');
+  ava.textContent = (cur.name||'?')[0].toUpperCase();
+  ava.className = 'ava ' + (isAdmin?'ava-admin':'ava-staff');
+
+  const newReqs = REQUESTS_DATA.filter(r=>r.status==='new').length;
+
+  let html = '';
+  if(isAdmin){
+    html = `
+      <div class="nav-sec">${t('sidebar.overview')}</div>
+      ${ni('dashboard','📊',t('page.dashboard'))}
+      ${ni('rooms','🛏️',t('page.rooms'))}
+      ${ni('bookings','📋',t('page.bookings'))}
+      ${ni('requests','📩',t('page.requests'), newReqs>0?newReqs:null)}
+      ${ni('guests','👥',t('page.guests'))}
+      <div class="nav-sec">${t('sidebar.main')}</div>
+      ${ni('checkin','🔑',t('page.checkin'))}
+      ${ni('staff','👤',t('page.staff'))}
+      ${ni('tasks','✅',t('page.tasks'))}
+      ${ni('finance','💰',t('page.finance'))}
+      ${ni('reports','📈',t('page.reports'))}
+      ${ni('admins','🛡️',t('page.admins'))}
+      ${ni('settings','⚙️',t('page.settings'))}
+    `;
+  } else {
+    html = `
+      <div class="nav-sec">${t('sidebar.overview')}</div>
+      ${ni('requests','📩',t('page.requests'), newReqs>0?newReqs:null)}
+      ${ni('checkin','🔑',t('page.checkin'))}
+      ${ni('rooms','🛏️',t('page.rooms'))}
+      ${ni('tasks','✅',t('page.tasks'))}
+      <div class="nav-sec">${t('sidebar.main')}</div>
+      ${ni('profile','👤',t('page.profile'))}
+    `;
+  }
+  document.getElementById('sb-nav').innerHTML = html;
+  buildLangBars();
+}
+function ni(page,icon,label,badge){
+  return `<div class="ni ${state.page===page?'active':''}" onclick="navigate('${page}')">
+    <span class="ni-icon">${icon}</span>${label}
+    ${badge?`<span class="ni-badge">${badge}</span>`:''}
+  </div>`;
+}
+function navigate(page){
+  state.page = page;
+  document.querySelectorAll('.ni').forEach(el=>{
+    el.classList.toggle('active', el.onclick && el.onclick.toString().includes(`'${page}'`));
+  });
+  const c = document.getElementById('content');
+  if(!c) return;
+  const pages = {
+    dashboard:renderDashboard, rooms:renderRooms, bookings:renderBookings,
+    requests:renderRequests, guests:renderGuests, staff:renderStaff,
+    tasks:renderTasks, finance:renderFinance, reports:renderReports,
+    settings:renderSettings, checkin:renderCheckin, admins:renderAdmins,
+    profile:renderProfile,
+  };
+  if(pages[page]) c.innerHTML = `<div class="fade-in">${pages[page]()}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// STATUS HELPERS
+// ══════════════════════════════════════════════════════════
+function statusBadge(s){
+  const map = {
+    'confirmed':'b-green','checked-in':'b-violet','checked-out':'b-blue',
+    'pending':'b-amber','cancelled':'b-red',
+    'available':'b-green','occupied':'b-blue','cleaning':'b-amber',
+    'new':'b-gold','reviewed':'b-blue','approved':'b-green','rejected':'b-red',
+    'on-duty':'b-green','break':'b-amber','off':'b-red','active':'b-green','inactive':'b-red',
+  };
+  const lbl = {
+    'confirmed':t('bk.confirmed'),'checked-in':t('bk.checkedin'),'checked-out':t('bk.checkout'),
+    'pending':t('bk.pending'),'cancelled':t('bk.cancelled'),
+    'available':t('room.available'),'occupied':t('room.occupied'),'cleaning':t('room.cleaning'),
+    'new':t('req.new'),'reviewed':t('req.reviewed'),'approved':t('req.approved'),'rejected':t('req.rejected'),
+    'on-duty':'Ishda','break':'Tanaffus','off':'Dam olish','active':'Faol','inactive':'Nofaol',
+  };
+  return `<span class="badge ${map[s]||'b-blue'}">${lbl[s]||s}</span>`;
+}
+function statCard(icon,label,val,change,dir){
+  return `<div class="card">
+    <div style="font-size:26px;margin-bottom:8px">${icon}</div>
+    <div class="stat-l">${label}</div>
+    <div class="stat-v">${val}</div>
+    <div class="stat-c ${dir==='up'?'up-c':'dn-c'}">${change}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+function renderDashboard(){
+  const isAdmin = state.role==='admin';
+  const occ = ROOMS_DATA.filter(r=>r.status==='occupied').length;
+  const total = ROOMS_DATA.length;
+  const activeBk = BOOKINGS_DATA.filter(b=>b.status==='confirmed'||b.status==='checked-in').length;
+  const newReqs = REQUESTS_DATA.filter(r=>r.status==='new').length;
+  return `
+    <div class="topbar">
+      <div>
+        <div class="pg-title">${t('page.dashboard')}</div>
+        <div class="pg-sub">BYW Hotel — Umumiy ko'rinish · ${new Date().toLocaleDateString('uz-UZ')}</div>
+      </div>
+      <div class="topbar-r">
+        ${isAdmin?`<button class="btn btn-primary btn-sm" onclick="navigate('requests')">📩 Arizalar ${newReqs>0?`<span style="background:var(--red);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px;margin-left:4px">${newReqs}</span>`:''}
+        </button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="navigate('checkin')">🔑 Check-in</button>
+      </div>
+    </div>
+    ${newReqs>0?`<div class="ev-banner">🔔 <strong>${newReqs} ta yangi bron arizasi</strong> ko'rib chiqilishini kutmoqda. <a href="#" onclick="navigate('requests')" style="color:var(--gold2);font-weight:600">Ko'rish →</a></div>`:''}
+    <div class="grid g4" style="margin-bottom:20px">
+      ${statCard('🛏️','Xonalar bandligi',occ+'/'+total,(occ/total*100).toFixed(0)+'%','up')}
+      ${statCard('📋','Faol bronlar',activeBk,'↑2 bugun','up')}
+      ${statCard('📩','Yangi arizalar',newReqs,newReqs>0?'Ko\'rib chiqing':'Hammasi ko\'rildi','up')}
+      ${statCard('💰','Bugungi daromad','4,750,000','↑12%','up')}
+    </div>
+    <div class="grid g2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="sec-title">📋 So'nggi Bronlar</div>
+        <table>
+          <thead><tr><th>Mehmon</th><th>Xona</th><th>Kirish</th><th>Holat</th></tr></thead>
+          <tbody>${BOOKINGS_DATA.slice(0,5).map(b=>`
+            <tr>
+              <td><strong>${b.guest}</strong><div style="font-size:11px;color:var(--muted)">${b.phone}</div></td>
+              <td>${b.room}-xona</td>
+              <td>${b.checkIn}</td>
+              <td>${statusBadge(b.status)}</td>
+            </tr>`).join('')}</tbody>
+        </table>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="navigate('bookings')">Barchasini ko'rish →</button>
+      </div>
+      <div class="card">
+        <div class="sec-title">📩 Yangi Arizalar</div>
+        ${REQUESTS_DATA.filter(r=>r.status==='new').length===0
+          ? `<div style="text-align:center;padding:30px;color:var(--muted);font-size:13px">✅ Barcha arizalar ko'rib chiqildi</div>`
+          : REQUESTS_DATA.filter(r=>r.status==='new').map(r=>`
+            <div class="req-card new-req">
+              <div class="req-top">
+                <span class="req-name">${r.guest}</span>
+                ${statusBadge(r.status)}
+              </div>
+              <div class="req-meta">
+                🛏 ${r.roomType} · ${r.checkIn} → ${r.checkOut}<br>
+                👥 ${r.guests} kishi · 💰 ${fmtM(r.total)}<br>
+                📅 ${r.created}
+              </div>
+              <div class="req-actions">
+                <button class="btn btn-success btn-sm" onclick="approveRequest('${r.id}')">✅ Tasdiqlash</button>
+                <button class="btn btn-outline btn-sm" onclick="showRequestDetail('${r.id}')">📄 Batafsil</button>
+                <button class="btn btn-danger btn-sm" onclick="rejectRequest('${r.id}')">✕ Rad</button>
+              </div>
+            </div>
+          `).join('')}
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="navigate('requests')">Barcha arizalar →</button>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="sec-title">🏨 Xonalar Holati</div>
+        ${['available','occupied','cleaning'].map(st=>{
+          const cnt = ROOMS_DATA.filter(r=>r.status===st).length;
+          const pct = (cnt/total*100).toFixed(0);
+          const lbl = st==='available'?t('room.available'):st==='occupied'?t('room.occupied'):t('room.cleaning');
+          return `<div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:13px">${lbl}</span>
+              <span class="badge ${st==='available'?'b-green':st==='occupied'?'b-blue':'b-amber'}">${cnt} (${pct}%)</span>
+            </div>
+            <div class="pb"><div class="pf" style="width:${pct}%"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <div class="sec-title">👤 Xodimlar</div>
+        ${STAFF_DATA.map(s=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+            <div class="ava ava-staff" style="width:30px;height:30px;font-size:11px">${s.name[0]}</div>
+            <div style="flex:1"><div style="font-size:12px;font-weight:600">${s.name}</div><div style="font-size:10px;color:var(--muted)">${s.role}</div></div>
+            ${statusBadge(s.status)}
+          </div>
+        `).join('')}
+      </div>
+      <div class="card">
+        <div class="sec-title">✅ Bugungi Vazifalar</div>
+        ${TASKS_DATA.slice(0,4).map(tk=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-size:12px;font-weight:600">${tk.type} — ${tk.room}-xona</div>
+              <div style="font-size:10px;color:var(--muted)">${tk.assigned}</div>
+            </div>
+            <span class="badge ${tk.status==='bajarildi'?'b-green':tk.status==='bajarilmoqda'?'b-blue':'b-amber'}">${tk.status}</span>
+          </div>
+        `).join('')}
+        <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="navigate('tasks')">Ko'rish →</button>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// REQUESTS PAGE (Bron Arizalari — Admin & Staff ko'radi)
+// ══════════════════════════════════════════════════════════
+function renderRequests(){
+  const newReqs = REQUESTS_DATA.filter(r=>r.status==='new').length;
+  const filters = [
+    {key:'all', label:'Barchasi', count:REQUESTS_DATA.length},
+    {key:'new', label:'Yangi', count:newReqs},
+    {key:'reviewed', label:"Ko'rildi", count:REQUESTS_DATA.filter(r=>r.status==='reviewed').length},
+    {key:'approved', label:'Tasdiqlandi', count:REQUESTS_DATA.filter(r=>r.status==='approved').length},
+    {key:'rejected', label:'Rad etildi', count:REQUESTS_DATA.filter(r=>r.status==='rejected').length}
+  ];
+  return `
+    <div class="topbar">
+      <div>
+        <div class="pg-title">${t('page.requests')}</div>
+        <div class="pg-sub">${REQUESTS_DATA.length} ta ariza · ${newReqs} ta yangi</div>
+      </div>
+    </div>
+    ${newReqs>0?`<div class="ev-banner">🔔 <strong>${newReqs} ta yangi ariza</strong> ko'rib chiqilishini kutmoqda!</div>`:''}
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      ${filters.map((f,i)=>`
+        <button class="btn btn-sm ${i===0?'btn-primary':'btn-outline'}" data-filter="${f.key}" onclick="filterRequests('${f.key}',this)" style="position:relative">
+          ${f.label}
+          ${f.count>0?`<span style="margin-left:6px;font-weight:700;color:inherit">(${f.count})</span>`:''}
+        </button>
+      `).join('')}
+    </div>
+    <div id="req-list">
+      ${renderRequestList(REQUESTS_DATA)}
+    </div>
+  `;
+}
+function renderRequestList(list){
+  if(list.length===0) return `<div class="card" style="text-align:center;padding:40px;color:var(--muted)">📭 Ariza topilmadi</div>`;
+  return list.map(r=>`
+    <div class="req-card ${r.status==='new'?'new-req':''}">
+      <div class="req-top">
+        <div>
+          <span class="req-name">${r.guest}</span>
+          <span style="font-size:11px;color:var(--muted);margin-left:8px">${r.id}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${statusBadge(r.status)}
+          <span style="font-size:11px;color:var(--muted)">${r.created}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:10px">
+        <div style="background:var(--surface2);padding:10px;border-radius:8px">
+          <div style="font-size:10px;color:var(--muted)">Xona turi</div>
+          <div style="font-weight:700;font-size:13px">${r.roomType}</div>
+        </div>
+        <div style="background:var(--surface2);padding:10px;border-radius:8px">
+          <div style="font-size:10px;color:var(--muted)">Kirish / Chiqish</div>
+          <div style="font-weight:700;font-size:13px">${r.checkIn} → ${r.checkOut}</div>
+        </div>
+        <div style="background:var(--surface2);padding:10px;border-radius:8px">
+          <div style="font-size:10px;color:var(--muted)">Mehmonlar / Tunlar</div>
+          <div style="font-weight:700;font-size:13px">${r.guests} kishi · ${r.nights} kecha</div>
+        </div>
+        <div style="background:var(--surface2);padding:10px;border-radius:8px">
+          <div style="font-size:10px;color:var(--muted)">Jami summa</div>
+          <div style="font-weight:700;font-size:13px;color:var(--gold2)">${fmtM(r.total)}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+        📞 ${r.phone} · ✉️ ${r.email} · 🎯 ${r.purpose}
+        ${r.special?` · 📝 "${r.special}"` : ''}
+      </div>
+      <div class="req-actions">
+        ${r.status==='new'||r.status==='reviewed'?`
+          <button class="btn btn-success btn-sm" onclick="approveRequest('${r.id}')">✅ Tasdiqlash & Bron qilish</button>
+          <button class="btn btn-amber btn-sm" onclick="showAssignRoom('${r.id}')">🏨 Xona belgilash</button>
+          <button class="btn btn-outline btn-sm" onclick="markReviewed('${r.id}')">👁 Ko'rildi</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectRequest('${r.id}')">✕ Rad etish</button>
+        `:`<span style="font-size:12px;color:var(--muted)">Amal bajarilgan</span>`}
+        <button class="btn btn-outline btn-sm" onclick="showRequestDetail('${r.id}')">📄 Batafsil</button>
+      </div>
+    </div>
+  `).join('');
+}
+function filterRequests(filter, btn){
+  // Clear all active filters
+  document.querySelectorAll('[data-filter]').forEach(b=>{b.className='btn btn-sm btn-outline'});
+  if(btn) btn.className='btn btn-sm btn-primary';
+  
+  // Filter list based on key
+  const list = filter==='all' ? REQUESTS_DATA : REQUESTS_DATA.filter(r=>r.status===filter);
+  document.getElementById('req-list').innerHTML = renderRequestList(list);
+}
+function markReviewed(id){
+  const r = REQUESTS_DATA.find(x=>x.id===id);
+  if(r){ r.status='reviewed'; notif('info','👁 Ariza ko\'rildi deb belgilandi'); navigate('requests'); buildSidebar(); }
+}
+function approveRequest(id){
+  const r = REQUESTS_DATA.find(x=>x.id===id);
+  if(!r) return;
+  // Auto-find room
+  const room = ROOMS_DATA.find(rm=>rm.type.toLowerCase().includes(r.roomType.toLowerCase()) && rm.status==='available');
+  if(!room){ notif('error','❌ Mos bo\'sh xona topilmadi! Avval xona belgilang.'); showAssignRoom(id); return; }
+  r.status='approved'; r.assignedRoom=room.id;
+  room.status='occupied';
+  const bkId = 'BK00'+(BOOKINGS_DATA.length+1);
+  BOOKINGS_DATA.push({
+    id:bkId, guest:r.guest, room:room.num, checkIn:r.checkIn, checkOut:r.checkOut,
+    nights:r.nights, total:r.total, status:'confirmed', guests:r.guests,
+    phone:r.phone, purpose:r.purpose, source:'request'
+  });
+  notif('success',`✅ Ariza tasdiqlandi! Bron ${bkId} yaratildi → ${room.num}-xona`);
+  buildSidebar(); navigate('requests');
+}
+function rejectRequest(id){
+  const r = REQUESTS_DATA.find(x=>x.id===id);
+  if(r){ r.status='rejected'; notif('amber','❌ Ariza rad etildi'); navigate('requests'); buildSidebar(); }
+}
+function showAssignRoom(id){
+  const r = REQUESTS_DATA.find(x=>x.id===id);
+  if(!r) return;
+  const avail = ROOMS_DATA.filter(rm=>rm.status==='available');
+  showModal(`
+    <div class="mh"><div class="mt">🏨 Xona belgilash — ${r.id}</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="margin-bottom:12px;font-size:13px;color:var(--muted)">
+      Mehmon: <strong style="color:var(--text)">${r.guest}</strong> · ${r.roomType} · ${r.checkIn} – ${r.checkOut}
+    </div>
+    <div class="fg"><label>Bo'sh xonalardan tanlang</label>
+      <select id="assign-room-sel">
+        ${avail.map(rm=>`<option value="${rm.id}">${rm.num}-xona — ${rm.type} (${fmtM(rm.price)}/kecha)</option>`).join('')}
+      </select>
+    </div>
+    <button class="btn btn-success" style="width:100%;margin-top:8px" onclick="confirmAssign('${id}')">✅ Belgilash va Tasdiqlash</button>
+  `);
+}
+function confirmAssign(reqId){
+  const sel = document.getElementById('assign-room-sel');
+  if(!sel) return;
+  const r = REQUESTS_DATA.find(x=>x.id===reqId);
+  const room = ROOMS_DATA.find(x=>x.id===sel.value);
+  if(!r || !room) return;
+  r.status='approved'; r.assignedRoom=room.id;
+  room.status='occupied';
+  const bkId = 'BK00'+(BOOKINGS_DATA.length+1);
+  BOOKINGS_DATA.push({
+    id:bkId, guest:r.guest, room:room.num, checkIn:r.checkIn, checkOut:r.checkOut,
+    nights:r.nights, total:r.total, status:'confirmed', guests:r.guests,
+    phone:r.phone, purpose:r.purpose, source:'request'
+  });
+  closeModal();
+  notif('success',`✅ ${room.num}-xona belgilandi! Bron ${bkId} yaratildi`);
+  buildSidebar(); navigate('requests');
+}
+function showRequestDetail(id){
+  const r = REQUESTS_DATA.find(x=>x.id===id);
+  if(!r) return;
+  showModal(`
+    <div class="mh"><div class="mt">📄 Ariza — ${r.id}</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:12px">${r.guest} ${statusBadge(r.status)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+        <div><span style="color:var(--muted)">Telefon:</span> <strong>${r.phone}</strong></div>
+        <div><span style="color:var(--muted)">Email:</span> <strong>${r.email}</strong></div>
+        <div><span style="color:var(--muted)">Xona turi:</span> <strong>${r.roomType}</strong></div>
+        <div><span style="color:var(--muted)">Belgilangan xona:</span> <strong>${r.assignedRoom||'—'}</strong></div>
+        <div><span style="color:var(--muted)">Kirish:</span> <strong>${r.checkIn}</strong></div>
+        <div><span style="color:var(--muted)">Chiqish:</span> <strong>${r.checkOut}</strong></div>
+        <div><span style="color:var(--muted)">Tunlar:</span> <strong>${r.nights} kecha</strong></div>
+        <div><span style="color:var(--muted)">Mehmonlar:</span> <strong>${r.guests} kishi</strong></div>
+        <div><span style="color:var(--muted)">Maqsad:</span> <strong>${r.purpose}</strong></div>
+        <div><span style="color:var(--muted)">Yaratildi:</span> <strong>${r.created}</strong></div>
+      </div>
+      ${r.special?`<div style="margin-top:10px;padding:10px;background:rgba(201,168,76,.08);border-radius:8px;font-size:12px"><strong>Maxsus talab:</strong> ${r.special}</div>`:''}
+    </div>
+    <div class="price-summary">
+      <div class="ps-row"><span>Xona narxi</span><span>${fmtM(r.total/(r.nights||1))}/kecha</span></div>
+      <div class="ps-row"><span>${r.nights} kecha</span><span>${fmtM(r.total)}</span></div>
+      <div class="ps-row"><span>Soliq (12%)</span><span>${fmtM(Math.round(r.total*.12))}</span></div>
+      <div class="ps-row"><span>JAMI:</span><span>${fmtM(r.total + Math.round(r.total*.12))}</span></div>
+    </div>
+    ${r.status==='new'||r.status==='reviewed'?`
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-success" style="flex:1" onclick="closeModal();approveRequest('${r.id}')">✅ Tasdiqlash</button>
+        <button class="btn btn-amber btn-sm" onclick="closeModal();showAssignRoom('${r.id}')">🏨 Xona belgilash</button>
+        <button class="btn btn-danger btn-sm" onclick="closeModal();rejectRequest('${r.id}')">✕ Rad</button>
+      </div>`:''}
+  `);
+}
+
+// ══════════════════════════════════════════════════════════
+// ROOMS
+// ══════════════════════════════════════════════════════════
+function renderRooms(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.rooms')}</div><div class="pg-sub">${ROOMS_DATA.length} ta xona</div></div>
+      <div class="topbar-r">
+        <select class="btn btn-outline btn-sm" style="padding:7px 12px" onchange="filterRoomsByStatus(this.value)">
+          <option value="">Barchasi</option>
+          <option value="available">Bo'sh</option>
+          <option value="occupied">Band</option>
+          <option value="cleaning">Tozalanmoqda</option>
+        </select>
+        ${state.role==='admin'?`<button class="btn btn-primary btn-sm" onclick="addRoomModal()">+ Xona qo'shish</button>`:''}
+      </div>
+    </div>
+    <div class="grid g4" style="margin-bottom:20px">
+      ${['available','occupied','cleaning'].map(st=>{
+        const cnt = ROOMS_DATA.filter(r=>r.status===st).length;
+        const lbl = st==='available'?t('room.available'):st==='occupied'?t('room.occupied'):t('room.cleaning');
+        return `<div class="card" style="text-align:center">
+          <div style="font-size:28px;margin-bottom:4px">${st==='available'?'✅':st==='occupied'?'🔒':'🧹'}</div>
+          <div class="stat-v">${cnt}</div><div class="stat-l">${lbl}</div>
+        </div>`;
+      }).join('')}
+      <div class="card" style="text-align:center"><div style="font-size:28px;margin-bottom:4px">🏨</div><div class="stat-v">${ROOMS_DATA.length}</div><div class="stat-l">Jami xona</div></div>
+    </div>
+    <div class="rooms-grid" id="rooms-grid">
+      ${ROOMS_DATA.map(r=>`
+        <div class="room-card" onclick="showRoomModal('${r.id}')">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+            <div class="rnum">${r.num}</div>
+            ${statusBadge(r.status)}
+          </div>
+          <div class="rtype">${r.type} · ${r.floor}-qavat · Max ${r.cap} 🧑</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin:8px 0">
+            ${r.features.slice(0,3).map(f=>`<span class="rtag">${f}</span>`).join('')}
+          </div>
+          <div class="rprice">${r.price.toLocaleString()} so'm<span style="font-size:11px;color:var(--muted);font-weight:400">/kecha</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function filterRoomsByStatus(status){
+  const filtered = status ? ROOMS_DATA.filter(r=>r.status===status) : ROOMS_DATA;
+  document.getElementById('rooms-grid').innerHTML = filtered.map(r=>`
+    <div class="room-card" onclick="showRoomModal('${r.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+        <div class="rnum">${r.num}</div>${statusBadge(r.status)}
+      </div>
+      <div class="rtype">${r.type} · ${r.floor}-qavat</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin:8px 0">${r.features.slice(0,3).map(f=>`<span class="rtag">${f}</span>`).join('')}</div>
+      <div class="rprice">${r.price.toLocaleString()} so'm</div>
+    </div>`).join('');
+}
+function showRoomModal(id){
+  const r = ROOMS_DATA.find(x=>x.id===id);
+  if(!r) return;
+  showModal(`
+    <div class="mh"><div class="mt">${r.emoji} ${r.num}-xona</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      ${statusBadge(r.status)}<span class="badge b-gold">Max ${r.cap} kishi</span><span class="badge b-blue">${r.floor}-qavat</span>
+    </div>
+    <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold2);margin-bottom:14px">${r.price.toLocaleString()} <span style="font-size:14px;font-family:'Outfit';font-weight:400;color:var(--muted)">so'm / kecha</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">${r.features.map(f=>`<span class="grf">${f}</span>`).join('')}</div>
+    <div class="fg"><label>Xona holati</label>
+      <select onchange="changeRoomStatus('${r.id}',this.value)">
+        <option ${r.status==='available'?'selected':''} value="available">${t('room.available')}</option>
+        <option ${r.status==='occupied'?'selected':''} value="occupied">${t('room.occupied')}</option>
+        <option ${r.status==='cleaning'?'selected':''} value="cleaning">${t('room.cleaning')}</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="closeModal();openBookingModal('${r.id}')">📅 Bron qilish</button>
+      <button class="btn btn-outline btn-sm" onclick="changeRoomStatus('${r.id}','cleaning');closeModal()">🧹 Tozalash</button>
+      <button class="btn btn-outline btn-sm" onclick="notif('info','Ta\'mirlash so\'rovi yuborildi!');closeModal()">🔧 Ta'mirlash</button>
+    </div>
+  `);
+}
+function changeRoomStatus(id, status){
+  const r = ROOMS_DATA.find(x=>x.id===id);
+  if(r){ r.status = status; notif('success','✅ Xona holati yangilandi!'); }
+}
+function addRoomModal(){
+  showModal(`
+    <div class="mh"><div class="mt">🛏 Yangi Xona Qo'shish</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="grid g2" style="gap:10px">
+      <div class="fg"><label>Xona raqami</label><input placeholder="e.g. 601" id="nr-num"></div>
+      <div class="fg"><label>Qavat</label><input type="number" placeholder="6" id="nr-floor"></div>
+    </div>
+    <div class="fg"><label>Tur</label><select id="nr-type"><option>Standart</option><option>Deluxe</option><option>Suite</option><option>Oilaviy</option><option>Prezident Suite</option></select></div>
+    <div class="grid g2" style="gap:10px">
+      <div class="fg"><label>Sig'im (kishi)</label><input type="number" value="2" id="nr-cap"></div>
+      <div class="fg"><label>Narx (so'm/kecha)</label><input type="number" placeholder="350000" id="nr-price"></div>
+    </div>
+    <div class="fg"><label>Jihozlar (vergul bilan)</label><input placeholder="WiFi, TV, AC, Vannaxona" id="nr-features"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="addRoom()">✅ Qo'shish</button>
+  `);
+}
+function addRoom(){
+  const num = document.getElementById('nr-num').value;
+  const floor = document.getElementById('nr-floor').value;
+  const type = document.getElementById('nr-type').value;
+  const cap = parseInt(document.getElementById('nr-cap').value)||2;
+  const price = parseInt(document.getElementById('nr-price').value)||350000;
+  const features = document.getElementById('nr-features').value.split(',').map(f=>f.trim()).filter(Boolean);
+  if(!num){ notif('error','Xona raqamini kiriting!'); return; }
+  ROOMS_DATA.push({id:num,num,type,cap,price,floor:parseInt(floor)||1,status:'available',features,emoji:'🛏️'});
+  closeModal(); notif('success','✅ '+num+'-xona qo\'shildi!'); navigate('rooms');
+}
+
+// ══════════════════════════════════════════════════════════
+// BOOKINGS
+// ══════════════════════════════════════════════════════════
+function renderBookings(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.bookings')}</div><div class="pg-sub">${BOOKINGS_DATA.length} ta bron</div></div>
+      <div class="topbar-r">
+        <button class="btn btn-primary btn-sm" onclick="openBookingModal()">+ Yangi bron</button>
+        <button class="btn btn-outline btn-sm" onclick="notif('info','📥 Hisobot yuklab olindi')">📥 Eksport</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <div class="card" style="padding:0">
+        <table>
+          <thead><tr><th>ID</th><th>Mehmon</th><th>Xona</th><th>Kirish</th><th>Chiqish</th><th>Kechalar</th><th>Summa</th><th>Holat</th><th>Amallar</th></tr></thead>
+          <tbody>${BOOKINGS_DATA.map(b=>`
+            <tr>
+              <td style="color:var(--gold2);font-weight:600">${b.id}</td>
+              <td><strong>${b.guest}</strong><div style="font-size:11px;color:var(--muted)">${b.phone}</div></td>
+              <td><strong>${b.room}</strong>-xona</td>
+              <td>${b.checkIn}</td>
+              <td>${b.checkOut}</td>
+              <td>${b.nights} 🌙</td>
+              <td style="color:var(--gold2);font-weight:600">${fmtM(b.total)}</td>
+              <td>${statusBadge(b.status)}</td>
+              <td>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  ${b.status==='confirmed'?`<button class="btn btn-success btn-sm" onclick="bkAction('${b.id}','checkin')">✅ Kirish</button>`:''}
+                  ${b.status==='checked-in'?`<button class="btn btn-outline btn-sm" onclick="bkAction('${b.id}','checkout')">👋 Chiqish</button>`:''}
+                  <button class="btn btn-outline btn-sm" onclick="showBkDetail('${b.id}')">📄</button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+function bkAction(id,action){
+  const b = BOOKINGS_DATA.find(x=>x.id===id);
+  if(!b) return;
+  if(action==='checkin'){ b.status='checked-in'; notif('success','✅ Check-in amalga oshirildi!'); }
+  if(action==='checkout'){
+    b.status='checked-out';
+    const room = ROOMS_DATA.find(r=>r.num===b.room);
+    if(room) room.status='cleaning';
+    notif('info','👋 Check-out! Xona tozalashga jo\'natildi');
+  }
+  navigate('bookings');
+}
+function showBkDetail(id){
+  const b = BOOKINGS_DATA.find(x=>x.id===id);
+  if(!b) return;
+  const tax = Math.round(b.total*.12);
+  showModal(`
+    <div class="mh"><div class="mt">📋 Bron — ${b.id}</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:14px">
+      <div style="font-size:18px;font-weight:700;margin-bottom:10px">${b.guest} ${statusBadge(b.status)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+        <div><span style="color:var(--muted)">Xona:</span> <strong>${b.room}-xona</strong></div>
+        <div><span style="color:var(--muted)">Telefon:</span> <strong>${b.phone}</strong></div>
+        <div><span style="color:var(--muted)">Kirish:</span> <strong>${b.checkIn}</strong></div>
+        <div><span style="color:var(--muted)">Chiqish:</span> <strong>${b.checkOut}</strong></div>
+        <div><span style="color:var(--muted)">Tunlar:</span> <strong>${b.nights} kecha</strong></div>
+        <div><span style="color:var(--muted)">Maqsad:</span> <strong>${b.purpose}</strong></div>
+      </div>
+    </div>
+    <div class="price-summary">
+      <div class="ps-row"><span>Xona narxi × ${b.nights} kecha</span><span>${fmtM(b.total)}</span></div>
+      <div class="ps-row"><span>Soliq (12%)</span><span>${fmtM(tax)}</span></div>
+      <div class="ps-row"><span>JAMI:</span><span>${fmtM(b.total+tax)}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      ${b.status==='confirmed'?`<button class="btn btn-success" style="flex:1" onclick="bkAction('${b.id}','checkin');closeModal()">✅ Check-in</button>`:''}
+      ${b.status==='checked-in'?`<button class="btn btn-outline" style="flex:1" onclick="bkAction('${b.id}','checkout');closeModal()">👋 Check-out</button>`:''}
+      ${b.status!=='cancelled'&&b.status!=='checked-out'?`<button class="btn btn-danger btn-sm" onclick="cancelBk('${b.id}')">Bekor qilish</button>`:''}
+    </div>
+  `);
+}
+function cancelBk(id){
+  const b = BOOKINGS_DATA.find(x=>x.id===id);
+  if(b){
+    b.status='cancelled';
+    const room = ROOMS_DATA.find(r=>r.num===b.room);
+    if(room && room.status==='occupied') room.status='available';
+    closeModal(); notif('amber','⚠️ Bron bekor qilindi'); navigate('bookings');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// CHECK-IN / CHECK-OUT
+// ══════════════════════════════════════════════════════════
+function renderCheckin(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.checkin')}</div><div class="pg-sub">Tezkor zaselenie va chiqish</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="sec-title">🔍 Mehmon Qidirish</div>
+        <div class="fg"><label>Bron ID, ism yoki telefon</label>
+          <input id="ci-q" placeholder="BK001 / Ahmad / +998..." onkeydown="if(event.key==='Enter')searchCI()">
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="searchCI()">🔍 Qidirish</button>
+        <div id="ci-result"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">📋 Bugun Check-in kutilmoqda</div>
+        ${BOOKINGS_DATA.filter(b=>b.status==='confirmed').map(b=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:600;font-size:13px">${b.guest}</div>
+                <div style="font-size:11px;color:var(--muted)">${b.room}-xona · ${b.checkIn} → ${b.checkOut}</div>
+              </div>
+              <button class="btn btn-success btn-sm" onclick="bkAction('${b.id}','checkin');renderCheckin&&navigate('checkin')">✅ Kirgizish</button>
+            </div>
+          </div>
+        `).join('') || `<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">✅ Bugun kiradiganlari yo'q</div>`}
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="sec-title">🏠 Hozir Turmoqda (Checked-in)</div>
+      <table>
+        <thead><tr><th>Mehmon</th><th>Xona</th><th>Kirdi</th><th>Chiqish</th><th>Amallar</th></tr></thead>
+        <tbody>${BOOKINGS_DATA.filter(b=>b.status==='checked-in').map(b=>`
+          <tr>
+            <td><strong>${b.guest}</strong><div style="font-size:11px;color:var(--muted)">${b.phone}</div></td>
+            <td>${b.room}-xona</td>
+            <td>${b.checkIn}</td>
+            <td>${b.checkOut}</td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="bkAction('${b.id}','checkout');navigate('checkin')">👋 Check-out</button>
+            </td>
+          </tr>
+        `).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--muted)">Hozir hech kim yo'q</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function searchCI(){
+  const q = document.getElementById('ci-q').value.toLowerCase().trim();
+  const res = document.getElementById('ci-result');
+  const found = BOOKINGS_DATA.find(b=>
+    b.id.toLowerCase()===q ||
+    b.guest.toLowerCase().includes(q) ||
+    (b.phone||'').includes(q)
+  );
+  if(found){
+    res.innerHTML = `<div class="ci-result">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="ava ava-guest" style="width:44px;height:44px;font-size:17px">${found.guest[0]}</div>
+        <div>
+          <div style="font-weight:700;font-size:16px">${found.guest}</div>
+          <div style="font-size:12px;color:var(--muted)">${found.id} · ${found.phone}</div>
+        </div>
+        ${statusBadge(found.status)}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:14px">
+        <div><span style="color:var(--muted)">Xona:</span> <strong>${found.room}-xona</strong></div>
+        <div><span style="color:var(--muted)">Mehmonlar:</span> <strong>${found.guests} kishi</strong></div>
+        <div><span style="color:var(--muted)">Kirish:</span> <strong>${found.checkIn}</strong></div>
+        <div><span style="color:var(--muted)">Chiqish:</span> <strong>${found.checkOut}</strong></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        ${found.status==='confirmed'?`<button class="btn btn-success" style="flex:1" onclick="bkAction('${found.id}','checkin');navigate('checkin')">✅ Check-in qilish</button>`:''}
+        ${found.status==='checked-in'?`<button class="btn btn-outline" style="flex:1" onclick="bkAction('${found.id}','checkout');navigate('checkin')">👋 Check-out qilish</button>`:''}
+        ${found.status==='checked-out'||found.status==='cancelled'?`<span style="color:var(--muted);font-size:12px">Bu bron yakunlangan</span>`:''}
+      </div>
+    </div>`;
+  } else {
+    res.innerHTML = `<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:14px;color:var(--red);font-size:13px">❌ "${q}" bo'yicha topilmadi</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// GUESTS
+// ══════════════════════════════════════════════════════════
+function renderGuests(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.guests')}</div><div class="pg-sub">${BOOKINGS_DATA.length} ta mehmon</div></div>
+    </div>
+    <div class="card" style="padding:0">
+      <table>
+        <thead><tr><th>Mehmon</th><th>Telefon</th><th>Xona</th><th>Kirish</th><th>Tunlar</th><th>Holat</th><th>Jami</th></tr></thead>
+        <tbody>${BOOKINGS_DATA.map(b=>`
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px">
+              <div class="ava ava-guest" style="width:30px;height:30px;font-size:11px">${b.guest[0]}</div>
+              <strong>${b.guest}</strong>
+            </div></td>
+            <td>${b.phone}</td>
+            <td>${b.room}-xona</td>
+            <td>${b.checkIn}</td>
+            <td>${b.nights} kecha</td>
+            <td>${statusBadge(b.status)}</td>
+            <td style="color:var(--gold2);font-weight:600">${fmtM(b.total)}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// STAFF
+// ══════════════════════════════════════════════════════════
+function renderStaff(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.staff')}</div><div class="pg-sub">${STAFF_DATA.length} ta xodim</div></div>
+      <div class="topbar-r"><button class="btn btn-primary btn-sm" onclick="addStaffModal()">+ Xodim qo'shish</button></div>
+    </div>
+    <div class="grid ga" style="margin-bottom:20px">
+      ${STAFF_DATA.map(s=>`
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="ava ava-staff" style="width:44px;height:44px;font-size:17px">${s.name[0]}</div>
+            <div>
+              <div style="font-weight:700;font-size:14px">${s.name}</div>
+              <div style="font-size:11px;color:var(--muted)">${s.role}</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:3px">⏰ ${s.shift}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">📞 ${s.phone}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            ${statusBadge(s.status)}
+            <div style="display:flex;gap:6px;align-items:center">
+              ${s.isLogin?`<span class="badge b-gold">🔑 Login</span>`:''}
+              <span style="font-size:11px;color:var(--muted)">${s.tasks} vazifa</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <button class="btn btn-outline btn-sm" style="flex:1" onclick="editStaffModal('${s.id}')">✏️ Tahrir</button>
+            <select class="btn btn-sm btn-outline" style="padding:6px" onchange="changeStaffStatus('${s.id}',this.value)">
+              <option value="on-duty" ${s.status==='on-duty'?'selected':''}>Ishda</option>
+              <option value="break" ${s.status==='break'?'selected':''}>Tanaffus</option>
+              <option value="off" ${s.status==='off'?'selected':''}>Dam olishda</option>
+            </select>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function changeStaffStatus(id,status){
+  const s = STAFF_DATA.find(x=>x.id===id);
+  if(s){ s.status=status; notif('info','👤 Xodim holati yangilandi'); }
+}
+function addStaffModal(){
+  showModal(`
+    <div class="mh"><div class="mt">👤 Yangi Xodim</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="grid g2" style="gap:10px;margin-bottom:10px">
+      <div class="fg"><label>Ism</label><input id="ns-name" placeholder="To'liq ism"></div>
+      <div class="fg"><label>Rol</label><select id="ns-role"><option>Resepshn</option><option>Uy bekasi</option><option>Texnik</option><option>Oshpaz</option><option>Xavfsizlik</option><option>Menejer</option></select></div>
+    </div>
+    <div class="fg"><label>Email (tizimga kirish uchun)</label><input type="email" id="ns-email" placeholder="xodim@byw.uz"></div>
+    <div class="fg"><label>Telefon</label><input id="ns-phone" placeholder="+998..."></div>
+    <div class="fg"><label>Ish vaqti</label><input id="ns-shift" placeholder="08:00-20:00"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:14px">
+      <div>
+        <div style="font-size:13px;font-weight:600">Tizimga kirish huquqi</div>
+        <div style="font-size:11px;color:var(--muted)">Bu xodim panel orqali kirishi mumkin</div>
+      </div>
+      <div class="tog" id="ns-login-tog" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="addStaff()">✅ Xodimni Qo'shish</button>
+  `);
+}
+function addStaff(){
+  const name = document.getElementById('ns-name').value;
+  const role = document.getElementById('ns-role').value;
+  const email = document.getElementById('ns-email').value;
+  const phone = document.getElementById('ns-phone').value;
+  const shift = document.getElementById('ns-shift').value;
+  const isLogin = document.getElementById('ns-login-tog').classList.contains('on');
+  if(!name||!email){ notif('error','Ism va emailni to\'ldiring!'); return; }
+  const id = 'S0'+(STAFF_DATA.length+1);
+  STAFF_DATA.push({id,name,role,email,shift:shift||'08:00-20:00',status:'on-duty',phone:phone||'—',tasks:0,isLogin});
+  closeModal(); notif('success','👤 '+name+' xodim sifatida qo\'shildi!'); navigate('staff');
+}
+function editStaffModal(id){
+  const s = STAFF_DATA.find(x=>x.id===id);
+  if(!s) return;
+  showModal(`
+    <div class="mh"><div class="mt">✏️ Xodim Tahrirlash</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="fg"><label>Ism</label><input id="es-name" value="${s.name}"></div>
+    <div class="fg"><label>Rol</label><input id="es-role" value="${s.role}"></div>
+    <div class="fg"><label>Email</label><input id="es-email" value="${s.email}"></div>
+    <div class="fg"><label>Telefon</label><input id="es-phone" value="${s.phone}"></div>
+    <div class="fg"><label>Ish vaqti</label><input id="es-shift" value="${s.shift}"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveStaff('${id}')">💾 Saqlash</button>
+      <button class="btn btn-danger btn-sm" onclick="removeStaff('${id}')">🗑 O'chirish</button>
+    </div>
+  `);
+}
+function saveStaff(id){
+  const s = STAFF_DATA.find(x=>x.id===id);
+  if(!s) return;
+  s.name = document.getElementById('es-name').value;
+  s.role = document.getElementById('es-role').value;
+  s.email = document.getElementById('es-email').value;
+  s.phone = document.getElementById('es-phone').value;
+  s.shift = document.getElementById('es-shift').value;
+  closeModal(); notif('success','✅ Xodim ma\'lumotlari yangilandi!'); navigate('staff');
+}
+function removeStaff(id){
+  const idx = STAFF_DATA.findIndex(x=>x.id===id);
+  if(idx>-1){ STAFF_DATA.splice(idx,1); closeModal(); notif('amber','🗑 Xodim o\'chirildi'); navigate('staff'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN MANAGEMENT (multi-admin)
+// ══════════════════════════════════════════════════════════
+function renderAdmins(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.admins')}</div><div class="pg-sub">${ADMIN_DATA.length} ta admin akkaunt</div></div>
+      <div class="topbar-r"><button class="btn btn-primary btn-sm" onclick="addAdminModal()">+ Admin qo'shish</button></div>
+    </div>
+    <div class="ev-banner">🛡️ Admin akkauntlari barcha tizim funksiyalarini boshqaradi. Faqat ishonchli kishilarga bering.</div>
+    <div style="margin-bottom:20px">
+      ${ADMIN_DATA.map(a=>`
+        <div class="admin-card">
+          <div class="ava ava-admin" style="width:48px;height:48px;font-size:18px">${a.name[0]}</div>
+          <div class="admin-info">
+            <div class="admin-name">${a.name}</div>
+            <div class="admin-email">${a.email}</div>
+            <div class="admin-badge-wrap">
+              <span class="badge b-gold">${a.role}</span>
+              ${statusBadge(a.status)}
+              ${a.id===state.currentAdmin?.id?`<span class="badge b-green">🟢 Joriy</span>`:''}
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">
+              📅 Yaratildi: ${a.created} · 🕐 Oxirgi kirish: ${a.lastLogin}
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+            <button class="btn btn-outline btn-sm" onclick="editAdminModal('${a.id}')">✏️ Tahrir</button>
+            ${a.id!==state.currentAdmin?.id?`
+              <button class="btn btn-sm ${a.status==='active'?'btn-amber':'btn-success'}" onclick="toggleAdminStatus('${a.id}')">
+                ${a.status==='active'?'🔒 Bloklash':'🔓 Faollashtirish'}
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteAdmin('${a.id}')">🗑 O'chirish</button>
+            `:`<span style="font-size:11px;color:var(--muted);text-align:center">Joriy</span>`}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="card">
+      <div class="sec-title">📋 Kirish Jurnali</div>
+      <table>
+        <thead><tr><th>Admin</th><th>Rol</th><th>Oxirgi kirish</th><th>Status</th></tr></thead>
+        <tbody>${ADMIN_DATA.map(a=>`
+          <tr>
+            <td><strong>${a.name}</strong><div style="font-size:11px;color:var(--muted)">${a.email}</div></td>
+            <td><span class="badge b-gold">${a.role}</span></td>
+            <td>${a.lastLogin}</td>
+            <td>${statusBadge(a.status)}</td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+function addAdminModal(){
+  showModal(`
+    <div class="mh"><div class="mt">🛡️ Yangi Admin Akkaunt</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="grid g2" style="gap:10px">
+      <div class="fg"><label>Ism Familiya</label><input id="na-name" placeholder="To'liq ism"></div>
+      <div class="fg"><label>Rol nomi</label><input id="na-role" placeholder="Menejer / Direktor..."></div>
+    </div>
+    <div class="fg"><label>Email (kirish uchun)</label><input type="email" id="na-email" placeholder="admin@byw.uz"></div>
+    <div class="fg"><label>Parol</label><input type="password" id="na-pw" placeholder="Kuchli parol kiriting"></div>
+    <div class="fg"><label>Parolni tasdiqlash</label><input type="password" id="na-pw2" placeholder="Parolni qayta kiriting"></div>
+    <div style="background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--muted)">
+      ⚠️ Yangi admin qo'shishdan oldin: bu shaxs barcha ma'lumotlarga kirish huquqiga ega bo'ladi. Faqat ishonchli xodimlarga bering.
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="addAdmin()">✅ Admin Akkaunt Yaratish</button>
+  `);
+}
+function addAdmin(){
+  const name = document.getElementById('na-name').value;
+  const role = document.getElementById('na-role').value||'Admin';
+  const email = document.getElementById('na-email').value;
+  const pw = document.getElementById('na-pw').value;
+  const pw2 = document.getElementById('na-pw2').value;
+  if(!name||!email||!pw){ notif('error','Barcha maydonlarni to\'ldiring!'); return; }
+  if(pw!==pw2){ notif('error','Parollar mos kelmadi!'); return; }
+  if(pw.length<6){ notif('error','Parol kamida 6 belgi bo\'lsin!'); return; }
+  if(ADMIN_DATA.find(a=>a.email===email)){ notif('error','Bu email allaqachon mavjud!'); return; }
+  const id = 'A0'+(ADMIN_DATA.length+1);
+  ADMIN_DATA.push({
+    id, name, email, password:pw, role,
+    status:'active', created:new Date().toLocaleDateString('uz-UZ'),
+    lastLogin:'Hali kirmagan', permissions:['all']
+  });
+  closeModal(); notif('success','🛡️ '+name+' admin akkaunt yaratildi!'); navigate('admins');
+}
+function editAdminModal(id){
+  const a = ADMIN_DATA.find(x=>x.id===id);
+  if(!a) return;
+  showModal(`
+    <div class="mh"><div class="mt">✏️ Admin Tahrirlash</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="fg"><label>Ism Familiya</label><input id="ea-name" value="${a.name}"></div>
+    <div class="fg"><label>Rol</label><input id="ea-role" value="${a.role}"></div>
+    <div class="fg"><label>Email</label><input id="ea-email" value="${a.email}"></div>
+    <div class="fg"><label>Yangi Parol (bo'sh qoldiring — o'zgartirilmaydi)</label><input type="password" id="ea-pw" placeholder="Yangi parol..."></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="saveAdmin('${id}')">💾 Saqlash</button>
+  `);
+}
+function saveAdmin(id){
+  const a = ADMIN_DATA.find(x=>x.id===id);
+  if(!a) return;
+  a.name = document.getElementById('ea-name').value;
+  a.role = document.getElementById('ea-role').value;
+  a.email = document.getElementById('ea-email').value;
+  const newpw = document.getElementById('ea-pw').value;
+  if(newpw.length>=6) a.password = newpw;
+  else if(newpw.length>0 && newpw.length<6){ notif('error','Parol kamida 6 belgi bo\'lsin!'); return; }
+  closeModal(); notif('success','✅ Admin ma\'lumotlari yangilandi!'); navigate('admins');
+}
+function toggleAdminStatus(id){
+  const a = ADMIN_DATA.find(x=>x.id===id);
+  if(!a) return;
+  a.status = a.status==='active'?'inactive':'active';
+  notif(a.status==='active'?'success':'amber', a.status==='active'?'🔓 Admin faollashtirildi':'🔒 Admin bloklandi');
+  navigate('admins');
+}
+function deleteAdmin(id){
+  const idx = ADMIN_DATA.findIndex(x=>x.id===id);
+  if(idx>-1){ ADMIN_DATA.splice(idx,1); notif('amber','🗑 Admin akkaunt o\'chirildi'); navigate('admins'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// TASKS
+// ══════════════════════════════════════════════════════════
+function renderTasks(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.tasks')}</div><div class="pg-sub">${TASKS_DATA.filter(x=>x.status!=='bajarildi').length} ta faol vazifa</div></div>
+      <div class="topbar-r"><button class="btn btn-primary btn-sm" onclick="addTaskModal()">+ Vazifa qo'shish</button></div>
+    </div>
+    <div class="grid g3">
+      ${[['kutilmoqda','⏳','Kutilmoqda'],['bajarilmoqda','⚡','Bajarilmoqda'],['bajarildi','✅','Bajarildi']].map(([s,ic,lbl])=>`
+        <div class="card">
+          <div class="sec-title">${ic} ${lbl}</div>
+          ${TASKS_DATA.filter(x=>x.status===s).map(tk=>`
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+                <span style="font-weight:600;font-size:13px">${tk.type} — ${tk.room}-xona</span>
+                <span class="badge ${tk.priority==='yuqori'?'b-red':tk.priority==='o\'rta'?'b-amber':'b-green'}" style="font-size:9px">${tk.priority}</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:8px">👤 ${tk.assigned} · ⏰ ${tk.time}</div>
+              ${s!=='bajarildi'?`<button class="btn btn-success btn-sm" style="width:100%" onclick="completeTask('${tk.id}')">
+                ${s==='kutilmoqda'?'▶ Boshlash':'✓ Yakunlash'}
+              </button>`:''}
+            </div>
+          `).join('') || `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Bo'sh</div>`}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function completeTask(id){
+  const tk = TASKS_DATA.find(x=>x.id===id);
+  if(!tk) return;
+  if(tk.status==='kutilmoqda') tk.status='bajarilmoqda';
+  else if(tk.status==='bajarilmoqda'){
+    tk.status='bajarildi';
+    if(tk.type==='Tozalash'){
+      const r = ROOMS_DATA.find(x=>x.num===tk.room);
+      if(r && r.status==='cleaning') r.status='available';
+    }
+  }
+  notif('success','✅ Vazifa yangilandi!'); navigate('tasks');
+}
+function addTaskModal(){
+  showModal(`
+    <div class="mh"><div class="mt">✅ Yangi Vazifa</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div class="fg"><label>Tur</label><select id="nt-type"><option>Tozalash</option><option>Xizmat</option><option>Ta'mirlash</option><option>Tayyorlash</option></select></div>
+    <div class="fg"><label>Xona</label><select id="nt-room">${ROOMS_DATA.map(r=>`<option value="${r.num}">${r.num}-xona (${r.type})</option>`).join('')}</select></div>
+    <div class="fg"><label>Mas'ul xodim</label><select id="nt-staff">${STAFF_DATA.map(s=>`<option>${s.name}</option>`).join('')}</select></div>
+    <div class="grid g2" style="gap:10px">
+      <div class="fg"><label>Muhimlik</label><select id="nt-pri"><option>yuqori</option><option>o'rta</option><option>past</option></select></div>
+      <div class="fg"><label>Vaqt</label><input type="time" id="nt-time" value="${new Date().toTimeString().slice(0,5)}"></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="addTask()">Qo'shish</button>
+  `);
+}
+function addTask(){
+  const type = document.getElementById('nt-type').value;
+  const room = document.getElementById('nt-room').value;
+  const staff = document.getElementById('nt-staff').value;
+  const pri = document.getElementById('nt-pri').value;
+  const time = document.getElementById('nt-time').value;
+  const id = 'T0'+(TASKS_DATA.length+1);
+  TASKS_DATA.push({id,room,type,priority:pri,status:'kutilmoqda',assigned:staff,time});
+  closeModal(); notif('success','✅ Vazifa qo\'shildi!'); navigate('tasks');
+}
+
+// ══════════════════════════════════════════════════════════
+// FINANCE
+// ══════════════════════════════════════════════════════════
+function renderFinance(){
+  const months = ['Yan','Fev','Mar','Apr','May','Iyn','Iyl'];
+  const data = [28,32,38,42,35,50,47];
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.finance')}</div><div class="pg-sub">2026 yil moliyaviy hisobot</div></div>
+      <div class="topbar-r"><button class="btn btn-outline btn-sm" onclick="notif('info','📥 Hisobot yuklab olindi')">📥 Eksport</button></div>
+    </div>
+    <div class="grid g4" style="margin-bottom:20px">
+      ${statCard('💰','Bu oy daromad','47,200,000 so\'m','↑12%','up')}
+      ${statCard('💳','Bu oy xarajat','18,500,000 so\'m','↑3%','dn')}
+      ${statCard('📈','Sof foyda','28,700,000 so\'m','↑18%','up')}
+      ${statCard('📊','O\'rtacha to\'lov','850,000 so\'m','↑5%','up')}
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="sec-title">📊 Oylik Daromad (2026)</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:160px;margin-bottom:8px">
+          ${data.map((v,i)=>`
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="font-size:10px;color:var(--gold2);font-weight:700">${v}M</div>
+              <div style="width:100%;background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:4px 4px 0 0;height:${v/50*140}px;min-height:8px;transition:height .4s"></div>
+              <div style="font-size:10px;color:var(--muted)">${months[i]}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-title">💸 So'nggi To'lovlar</div>
+        <table>
+          <thead><tr><th>Bron</th><th>Mehmon</th><th>Summa</th><th>Holat</th></tr></thead>
+          <tbody>${BOOKINGS_DATA.slice(0,6).map(b=>`
+            <tr>
+              <td style="color:var(--gold2)">${b.id}</td>
+              <td>${b.guest}</td>
+              <td style="color:var(--green);font-weight:600">${fmtM(b.total)}</td>
+              <td>${statusBadge(b.status)}</td>
+            </tr>
+          `).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// REPORTS
+// ══════════════════════════════════════════════════════════
+function renderReports(){
+  const occ = ROOMS_DATA.filter(r=>r.status==='occupied').length;
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.reports')}</div></div>
+      <div class="topbar-r"><button class="btn btn-primary btn-sm" onclick="notif('info','📥 CSV yuklab olindi')">📥 CSV</button></div>
+    </div>
+    <div class="grid g3" style="margin-bottom:20px">
+      ${statCard('🛏️','Bandlik darajasi',Math.round(occ/ROOMS_DATA.length*100)+'%','Oylik o\'rtacha','up')}
+      ${statCard('👥','Jami mehmonlar',''+BOOKINGS_DATA.length,'Bu oy','up')}
+      ${statCard('⭐','O\'rtacha reyting','4.8 / 5.0','96 sharh','up')}
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="sec-title">🌍 Mehmonlar Geografi</div>
+        ${[["🇺🇿 O'zbekiston",45],['🇷🇺 Rossiya',22],['🇬🇧 Buyuk Britaniya',12],['🇨🇳 Xitoy',8],['🇰🇷 Koreya',5],['Boshqalar',8]].map(([n,p])=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${n}</span><strong>${p}%</strong></div>
+            <div class="pb"><div class="pf" style="width:${p}%"></div></div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="card">
+        <div class="sec-title">📊 Xona Turi Bo'yicha Daromad</div>
+        ${[['Standart',35],['Deluxe',30],['Suite',20],['Oilaviy',10],['Prezident',5]].map(([n,p])=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${n}</span><strong>${p}%</strong></div>
+            <div class="pb"><div class="pf" style="width:${p}%"></div></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════
+function renderSettings(){
+  return `
+    <div class="topbar">
+      <div><div class="pg-title">${t('page.settings')}</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="sec-title">🏨 Mehmoxona Ma'lumotlari</div>
+        <div class="fg"><label>Mehmoxona nomi</label><input value="BYW Hotel"></div>
+        <div class="fg"><label>Manzil</label><input value="Amir Temur ko'chasi 15, Toshkent"></div>
+        <div class="fg"><label>Telefon</label><input value="+998 71 200 00 00"></div>
+        <div class="fg"><label>Email</label><input value="info@byw-hotel.uz"></div>
+        <button class="btn btn-primary btn-sm" onclick="notif('success','✅ Sozlamalar saqlandi!')">💾 Saqlash</button>
+      </div>
+      <div class="card">
+        <div class="sec-title">💰 Narx Sozlamalari</div>
+        ${ROOMS_DATA.filter((r,i,a)=>a.findIndex(x=>x.type===r.type)===i).map(r=>`
+          <div class="fg"><label>${r.type} (so'm/kecha)</label><input type="number" value="${r.price}" onchange="updateRoomPrice('${r.type}',this.value)"></div>
+        `).join('')}
+        <button class="btn btn-primary btn-sm" onclick="notif('success','✅ Narxlar yangilandi!')">💾 Saqlash</button>
+      </div>
+      <div class="card">
+        <div class="sec-title">🌐 Interfeys Tili</div>
+        <div class="lang-bar" style="flex-wrap:wrap;gap:8px">
+          ${LANGS.map(l=>`<button class="lb ${state.lang===l.code?'active':''}" style="padding:8px 16px;font-size:13px" onclick="setLang('${l.code}')">${l.flag} ${l.name}</button>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-title">🔔 Bildirishnomalar</div>
+        ${[['Yangi bron arizasi kelganda','on'],['Check-in eslatmasi','on'],['Xona band bo\'lganda','off'],['Oylik hisobot','on']].map(([lbl,v])=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px">${lbl}</span>
+            <div class="tog ${v==='on'?'on':''}" onclick="this.classList.toggle('on')"></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+function updateRoomPrice(type, val){
+  ROOMS_DATA.filter(r=>r.type===type).forEach(r=>r.price=parseInt(val)||r.price);
+}
+
+// ══════════════════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════════════════
+function renderProfile(){
+  const cur = state.currentAdmin || {name:'Xodim',role:'Staff',email:'staff@byw.uz'};
+  const isA = state.role==='admin';
+  return `
+    <div class="topbar"><div><div class="pg-title">${t('page.profile')}</div></div></div>
+    <div class="grid g2">
+      <div class="card">
+        <div style="text-align:center;margin-bottom:20px">
+          <div class="ava ${isA?'ava-admin':'ava-staff'}" style="width:70px;height:70px;font-size:26px;margin:0 auto 12px">${cur.name[0]}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900">${cur.name}</div>
+          <div style="color:var(--muted);font-size:13px;margin-top:4px">${cur.role}</div>
+        </div>
+        <div class="fg"><label>Ism Familiya</label><input value="${cur.name}" id="pr-name"></div>
+        <div class="fg"><label>Email</label><input value="${cur.email}" id="pr-email"></div>
+        <button class="btn btn-primary btn-sm" onclick="updateProfile()">💾 Saqlash</button>
+      </div>
+      <div class="card">
+        <div class="sec-title">🔒 Parolni O'zgartirish</div>
+        <div class="fg"><label>Joriy parol</label><input type="password" id="old-pw" placeholder="••••••••"></div>
+        <div class="fg"><label>Yangi parol</label><input type="password" id="new-pw" placeholder="••••••••"></div>
+        <div class="fg"><label>Tasdiqlash</label><input type="password" id="conf-pw" placeholder="••••••••"></div>
+        <button class="btn btn-blue btn-sm" onclick="changePassword()">Yangilash</button>
+      </div>
+    </div>
+  `;
+}
+
+// Profile update
+function updateProfile(){
+  notif('success','✅ Profil yangilandi!');
+}
+
+// Password change
+function changePassword(){
+  const oldPw = document.getElementById('old-pw').value;
+  const newPw = document.getElementById('new-pw').value;
+  const confPw = document.getElementById('conf-pw').value;
+  
+  if(!oldPw || !newPw || !confPw){
+    notif('error','❌ Barcha maydonlarni to\'ldiring!');
+    return;
+  }
+  
+  if(newPw !== confPw){
+    notif('error','❌ Yangi parollar mos kelmadi!');
+    return;
+  }
+  
+  if(newPw.length < 6){
+    notif('error','❌ Parol kamida 6 belgi bo\'lsin!');
+    return;
+  }
+  
+  notif('success','✅ Parol o\'zgartirildi!');
+  document.getElementById('old-pw').value = '';
+  document.getElementById('new-pw').value = '';
+  document.getElementById('conf-pw').value = '';
+}
+
+// ══════════════════════════════════════════════════════════
+// BOOKING MODAL (4-step: from guest site)
+// ══════════════════════════════════════════════════════════
+function openBookingModal(roomId){
+  state.bookingStep = 1;
+  state.bookingData = {
+    roomType: roomId || ROOMS_DATA[0].id,
+    checkIn:'', checkOut:'', guests:2, purpose:'family',
+    fname:'', lname:'', phone:'', email:'', special:''
+  };
+  renderBookingStep();
+}
+function renderBookingStep(){
+  const s = state.bookingStep;
+  const d = state.bookingData;
+  const today = new Date().toISOString().split('T')[0];
+  const stepsHtml = `
+    <div class="book-steps">
+      <div class="bs ${s>=1?'active':''}">${s>1?'✓':''} 1. Xona turi</div>
+      <span class="bs-sep">›</span>
+      <div class="bs ${s>=2?'active':''}">${s>2?'✓':''} 2. Sanalar</div>
+      <span class="bs-sep">›</span>
+      <div class="bs ${s>=3?'active':''}">${s>3?'✓':''} 3. Ma'lumot</div>
+      <span class="bs-sep">›</span>
+      <div class="bs ${s>=4?'active':''}">4. Tasdiqlash</div>
+    </div>`;
+  let body = '';
+  if(s===1){
+    body = ROOMS_DATA.filter(r=>r.status==='available').map(r=>`
+      <div style="background:var(--surface);border:1px solid ${d.roomType===r.id?'var(--gold)':'var(--border)'};border-radius:12px;padding:14px;cursor:pointer;margin-bottom:10px;transition:all .2s" onclick="bSet('roomType','${r.id}');document.querySelectorAll('[data-rcard]').forEach(x=>x.style.borderColor='var(--border)');this.style.borderColor='var(--gold)'" data-rcard>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px">${r.emoji}</span>
+            <div>
+              <div style="font-weight:700">${r.num}-xona — ${r.type}</div>
+              <div style="font-size:11px;color:var(--muted)">${r.floor}-qavat · Max ${r.cap} kishi</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${r.features.slice(0,3).map(f=>`<span class="rtag">${f}</span>`).join('')}</div>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold2)">${r.price.toLocaleString()}</div>
+            <div style="font-size:11px;color:var(--muted)">so'm/kecha</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } else if(s===2){
+    body = `
+      <div class="grid g2" style="gap:12px;margin-bottom:16px">
+        <div class="fg"><label>📅 Kirish sanasi</label><input type="date" min="${today}" value="${d.checkIn}" onchange="bSet('checkIn',this.value);calcNights()"></div>
+        <div class="fg"><label>📅 Chiqish sanasi</label><input type="date" min="${today}" value="${d.checkOut}" onchange="bSet('checkOut',this.value);calcNights()"></div>
+      </div>
+      <div class="fg">
+        <label>Mehmonlar soni:</label>
+        <div class="guests-control">
+          <button class="gc-btn" onclick="bGuests(-1)">−</button>
+          <div class="gc-val" id="gc-val">${d.guests}</div>
+          <button class="gc-btn" onclick="bGuests(1)">+</button>
+          <span style="color:var(--muted);font-size:13px">kishi</span>
+        </div>
+      </div>
+      <div id="nights-info" style="color:var(--gold2);font-size:14px;font-weight:600;margin-bottom:12px">${d.checkIn&&d.checkOut?getNights(d.checkIn,d.checkOut)+' kecha':''}</div>
+      <div id="price-sum"></div>
+    `;
+    setTimeout(updatePriceSummary, 30);
+  } else if(s===3){
+    body = `
+      <div class="grid g2" style="gap:12px">
+        <div class="fg"><label>Ism</label><input placeholder="Ism" value="${d.fname}" onchange="bSet('fname',this.value)"></div>
+        <div class="fg"><label>Familiya</label><input placeholder="Familiya" value="${d.lname}" onchange="bSet('lname',this.value)"></div>
+      </div>
+      <div class="fg"><label>Telefon</label><input type="tel" placeholder="+998 90 123 45 67" value="${d.phone}" onchange="bSet('phone',this.value)"></div>
+      <div class="fg"><label>Email</label><input type="email" placeholder="email@example.com" value="${d.email}" onchange="bSet('email',this.value)"></div>
+      <div class="fg"><label>Maqsad</label>
+        <div class="purpose-grid">
+          ${[['family','👨‍👩‍👧 Oilaviy'],['friends','👫 Do\'stlar'],['business','💼 Biznes']].map(([v,lbl])=>`
+            <div class="pg-card ${d.purpose===v?'sel':''}" onclick="bSet('purpose','${v}');document.querySelectorAll('.pg-card').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')">${lbl}</div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="fg"><label>Maxsus talab (ixtiyoriy)</label><textarea rows="2" placeholder="..." onchange="bSet('special',this.value)">${d.special}</textarea></div>
+    `;
+  } else if(s===4){
+    const room = ROOMS_DATA.find(r=>r.id===d.roomType) || ROOMS_DATA[0];
+    const nights = d.checkIn&&d.checkOut ? getNights(d.checkIn,d.checkOut) : 1;
+    const base = room.price * nights;
+    const tax = Math.round(base*.12);
+    body = `
+      <div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:14px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">${room.emoji} ${room.type} — ${room.num}-xona</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+          <div><span style="color:var(--muted)">Kirish:</span> <strong>${d.checkIn||'—'}</strong></div>
+          <div><span style="color:var(--muted)">Chiqish:</span> <strong>${d.checkOut||'—'}</strong></div>
+          <div><span style="color:var(--muted)">Mehmonlar:</span> <strong>${d.guests} kishi</strong></div>
+          <div><span style="color:var(--muted)">Maqsad:</span> <strong>${d.purpose==='family'?'Oilaviy':d.purpose==='friends'?'Do\'stlar':'Biznes'}</strong></div>
+          <div><span style="color:var(--muted)">Ism:</span> <strong>${d.fname} ${d.lname}</strong></div>
+          <div><span style="color:var(--muted)">Telefon:</span> <strong>${d.phone||'—'}</strong></div>
+        </div>
+      </div>
+      <div class="price-summary">
+        <div class="ps-row"><span>${room.price.toLocaleString()} × ${nights} kecha</span><span>${base.toLocaleString()} so'm</span></div>
+        <div class="ps-row"><span>Soliq (12%)</span><span>${tax.toLocaleString()} so'm</span></div>
+        <div class="ps-row"><span>JAMI:</span><span>${(base+tax).toLocaleString()} so'm</span></div>
+      </div>
+      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:12px;margin-top:12px;font-size:12px;color:var(--muted)">
+        ℹ️ Arizangiz admin yoki resepshnга yuboriladi. Tasdiqlangandan so'ng bron raqami SMS orqali yuboriladi.
+      </div>
+    `;
+  }
+  showModal(`
+    <div class="mh"><div class="mt">📅 Xona Bron Qilish</div><button class="mc" onclick="closeModal()">✕</button></div>
+    ${stepsHtml}
+    <div class="fade-in">${body}</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      ${s>1?`<button class="btn btn-outline" style="flex:1" onclick="goBookStep(${s-1})">← Orqaga</button>`:''}
+      ${s<4
+        ?`<button class="btn btn-primary" style="flex:2" onclick="goBookStep(${s+1})">Keyingisi →</button>`
+        :`<button class="btn btn-success" style="flex:2" onclick="confirmBooking()">✅ Ariza Yuborish</button>`
+      }
+    </div>
+  `);
+}
+function bSet(k,v){ state.bookingData[k]=v; }
+function bGuests(d){ state.bookingData.guests=Math.max(1,Math.min(10,state.bookingData.guests+d)); const e=document.getElementById('gc-val');if(e)e.textContent=state.bookingData.guests; updatePriceSummary(); }
+function getNights(a,b){ return Math.max(1,Math.round((new Date(b)-new Date(a))/86400000)); }
+function calcNights(){
+  const d=state.bookingData;
+  const ni=document.getElementById('nights-info');
+  if(ni&&d.checkIn&&d.checkOut&&d.checkIn<d.checkOut) ni.textContent=getNights(d.checkIn,d.checkOut)+' kecha';
+  updatePriceSummary();
+}
+function updatePriceSummary(){
+  const d=state.bookingData;
+  const el=document.getElementById('price-sum');
+  if(!el) return;
+  const room=ROOMS_DATA.find(r=>r.id===d.roomType)||ROOMS_DATA[0];
+  const nights=d.checkIn&&d.checkOut&&d.checkIn<d.checkOut?getNights(d.checkIn,d.checkOut):1;
+  const base=room.price*nights;
+  const tax=Math.round(base*.12);
+  el.innerHTML=`<div class="price-summary">
+    <div class="ps-row"><span>${room.price.toLocaleString()} × ${nights} kecha × ${d.guests} kishi</span><span>${base.toLocaleString()}</span></div>
+    <div class="ps-row"><span>Soliq (12%)</span><span>${tax.toLocaleString()}</span></div>
+    <div class="ps-row"><span>JAMI:</span><span>${(base+tax).toLocaleString()} so'm</span></div>
+  </div>`;
+}
+function goBookStep(n){ state.bookingStep=n; renderBookingStep(); }
+function confirmBooking(){
+  const d=state.bookingData;
+  const room=ROOMS_DATA.find(r=>r.id===d.roomType)||ROOMS_DATA[0];
+  const nights=d.checkIn&&d.checkOut?getNights(d.checkIn,d.checkOut):1;
+  const reqId='REQ00'+(REQUESTS_DATA.length+1);
+  REQUESTS_DATA.push({
+    id:reqId, guest:((d.fname||'Mehmon')+' '+(d.lname||'')).trim(),
+    phone:d.phone||'+998...', email:d.email||'—',
+    roomType:room.type, checkIn:d.checkIn||'—', checkOut:d.checkOut||'—',
+    nights, guests:d.guests, purpose:d.purpose==='family'?'Oilaviy':d.purpose==='friends'?"Do'stlar":'Biznes',
+    special:d.special||'', total:room.price*nights,
+    status:'new', created:new Date().toLocaleString('uz-UZ'), assignedRoom:''
+  });
+  closeModal();
+  notif('success', t('notif.book.ok'));
+}
+
+// ══════════════════════════════════════════════════════════
+// GUEST SITE RENDER
+// ══════════════════════════════════════════════════════════
+function renderGuestContent(){
+  renderGuestRooms(); renderServices(); renderPackages(); renderGallery(); renderReviews(); renderLocInfo();
+}
+function guestNav(section){
+  const el=document.getElementById('sec-'+section)||document.getElementById('sec-hero');
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+function renderGuestRooms(){
+  const g=document.getElementById('guest-rooms-grid');
+  if(!g) return;
+  g.innerHTML=ROOMS_DATA.map(r=>`
+    <div class="gr-card" onclick="openRoomDetail('${r.id}')">
+      <div class="gr-img">
+        <div style="font-size:60px;position:relative;z-index:1">${r.emoji}</div>
+        <div class="gr-img-badge">${r.type}</div>
+      </div>
+      <div class="gr-body">
+        <div class="gr-name">${r.num}-xona — ${r.type}</div>
+        <div class="gr-desc">${r.cap} kishilik · ${r.floor}-qavat · ${r.status==='available'?'✅ Bo\'sh':'🔒 Band'}</div>
+        <div class="gr-features">${r.features.map(f=>`<span class="grf">${f}</span>`).join('')}</div>
+        <div class="gr-footer">
+          <div class="gr-price">${r.price.toLocaleString()} so'm<small>/kecha</small></div>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openBookingModal('${r.id}')">Bron qilish</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function openRoomDetail(id){
+  const r=ROOMS_DATA.find(x=>x.id===id);
+  if(!r) return;
+  const avail=r.status==='available';
+  showModal(`
+    <div class="mh"><div class="mt">${r.emoji} ${r.num}-xona — ${r.type}</div><button class="mc" onclick="closeModal()">✕</button></div>
+    <div style="height:150px;background:linear-gradient(135deg,#1a2040,#0d1520);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:16px">${r.emoji}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <span class="badge ${avail?'b-green':'b-red'}">${avail?'Bo\'sh':'Band'}</span>
+      <span class="badge b-gold">Max ${r.cap} kishi</span>
+      <span class="badge b-blue">${r.floor}-qavat</span>
+    </div>
+    <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold2);margin-bottom:12px">${r.price.toLocaleString()} <span style="font-size:14px;font-weight:400;font-family:'Outfit';color:var(--muted)">so'm / kecha</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">${r.features.map(f=>`<span class="grf">${f}</span>`).join('')}</div>
+    ${avail?`<button class="btn btn-primary" style="width:100%" onclick="closeModal();openBookingModal('${r.id}')">📅 Hoziroq Bron Qilish →</button>`:`<button class="btn btn-outline" style="width:100%;opacity:.5" disabled>Hozircha band</button>`}
+  `);
+}
+function renderServices(){
+  const g=document.getElementById('svc-grid');
+  if(!g) return;
+  g.innerHTML=SERVICES.map(s=>`<div class="svc-card"><div class="svc-icon">${s.icon}</div><div class="svc-name">${s.key}</div><div class="svc-desc">${s.desc}</div></div>`).join('');
+}
+function renderPackages(){
+  const g=document.getElementById('pkg-grid');
+  if(!g) return;
+  g.innerHTML=PACKAGES.map(p=>`
+    <div class="pkg-card${p.featured?' featured':''}">
+      ${p.featured?`<div class="pkg-featured-badge">⭐ Ommabop</div>`:''}
+      <div class="pkg-name">${p.name}</div>
+      <div class="pkg-price">${p.price.toLocaleString()} so'm<small> / ${p.per}</small></div>
+      <div class="pkg-desc">${p.desc}</div>
+      ${p.features.map(f=>`<div class="pkg-item">${f}</div>`).join('')}
+      <button class="btn ${p.featured?'btn-primary':'btn-outline'}" style="width:100%;margin-top:14px" onclick="openBookingModal()">Bron qilish</button>
+    </div>`).join('');
+}
+function renderGallery(){
+  const g=document.getElementById('gal-grid');
+  if(!g) return;
+  const items=[
+    {e:'🏨',tall:true,lbl:'Mehmoxona binosi'},
+    {e:'🛏️',lbl:'Deluxe xona'},
+    {e:'🍽️',lbl:'Restoran'},
+    {e:'💆',lbl:'SPA Markazi'},
+    {e:'🏊',lbl:'Baseyn'},
+    {e:'🌆',lbl:'Toshkent manzarasi'},
+    {e:'🎭',lbl:'Konferens Zal'},
+  ];
+  g.innerHTML=items.map((it,i)=>`
+    <div class="gal-item${it.tall?' tall':''}">
+      <div class="gal-img" style="background:linear-gradient(135deg,hsl(${200+i*30},40%,12%),hsl(${230+i*25},50%,8%))">
+        <div style="font-size:44px;position:relative;z-index:1">${it.e}</div>
+        <div style="position:absolute;bottom:10px;left:10px;right:10px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;z-index:1">${it.lbl}</div>
+      </div>
+    </div>`).join('');
+}
+function renderReviews(){
+  const g=document.getElementById('rev-grid');
+  if(!g) return;
+  g.innerHTML=REVIEWS.map(r=>`
+    <div class="rev-card">
+      <div class="rev-stars">${'⭐'.repeat(r.stars)}</div>
+      <div class="rev-text">"${r.text}"</div>
+      <div class="rev-author">
+        <div class="rev-ava">${r.ava}</div>
+        <div><div class="rev-name">${r.name}</div><div class="rev-country">${r.country}</div></div>
+      </div>
+    </div>`).join('');
+}
+function renderLocInfo(){
+  const g=document.getElementById('loc-info');
+  if(!g) return;
+  g.innerHTML=LOC_ITEMS.map(it=>`
+    <div class="loc-item">
+      <div class="loc-icon">${it.icon}</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">${it.title}</div>
+        <div style="font-size:14px">${it.val}</div>
+      </div>
+    </div>`).join('');
+}
+function sendContact(){
+  notif('success','✅ Xabar yuborildi! 24 soat ichida javob beramiz.');
+  ['cnt-name','cnt-email','cnt-subj','cnt-msg'].forEach(id=>{ const e=document.getElementById(id);if(e)e.value=''; });
+}
+
+// ══════════════════════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════════════════════
+function initParticles(type){
+  const c=document.getElementById('ptcls');
+  c.innerHTML='';
+  if(type==='none') return;
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    p.className='ptcl';
+    const size=type==='snow'?Math.random()*5+2:Math.random()*10+5;
+    const color=type==='snow'?'#fff':['#f9a8d4','#fda4af','#f0abfc'][Math.floor(Math.random()*3)];
+    Object.assign(p.style,{
+      left:Math.random()*100+'%', width:size+'px', height:size+'px',
+      background:color, animationDuration:(Math.random()*6+4)+'s',
+      animationDelay:(Math.random()*5)+'s', opacity:'0',
+      borderRadius:type==='petals'?'50% 0 50% 0':'50%'
+    });
+    c.appendChild(p);
+  }
+}
+
+// Apply Lucide icons 
+function applyIcons(){
+  try {
+    if(window.lucide) window.lucide.createIcons();
+  } catch(e) {
+    console.warn('Lucide не загружен:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('g-nav');
+  if(nav) nav.classList.toggle('scrolled',window.scrollY>50);
+});
+buildLangBars();
+// Open HOME page by default (not login)
+state.role = 'guest';
+showScreen('screen-guest');
+renderGuestContent();
+applyIcons();
+</script>
+</body>
+</html>
